@@ -1,0 +1,104 @@
+[
+  {
+    "name": "Superlist",
+    "categories": ["Goat", "Superlist"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "FileCR",
+    "categories": ["Pirate"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "4Download",
+    "categories": ["Pirate"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "SoftProber",
+    "categories": ["Pirate"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "Movie-Web",
+    "categories": ["Entertainment"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "PressPlay",
+    "categories": ["Entertainment"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "GFXFather",
+    "categories": ["Creative"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "Anicrush",
+    "categories": ["Entertainment"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "Animeflix",
+    "categories": ["Entertainment"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "MangoAI",
+    "categories": ["AI"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "MangaDex",
+    "categories": ["Entertainment"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "Comick",
+    "categories": ["Entertainment"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "NTSCQ",
+    "categories": ["Creative"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "noclip.website",
+    "categories": ["Dev"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "Anna's Archive",
+    "categories": ["Entertainment", "Books"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  },
+  {
+    "name": "GenP",
+    "categories": ["Design", "Creative", "VFX", "GFX"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "https://www.reddit.com/r/GenP/wiki/redditgenpguides/"
+  },
+  {
+    "name": "4Download",
+    "categories": ["Portfolio"],
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "link": "./"
+  }
+]

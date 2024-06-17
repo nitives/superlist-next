@@ -17,7 +17,7 @@ export default function Downloads() {
       img.src = download.image;
 
       img.onload = () => {
-        const palette = colorThief.getPalette(img, 8); // Get an array of 8 colors
+        const palette = colorThief.getPalette(img); // Get an array of colors
         const vibrantColor = getMostVibrantColor(palette);
         newColors[download.name] = `rgba(${vibrantColor.join(",")}, 0.25)`; // Set opacity here
         if (Object.keys(newColors).length === downloadsData.length) {

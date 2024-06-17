@@ -32,6 +32,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="title" content="Superlist" />
+        <meta
+          name="description"
+          content="The Ultimate List of the Internet, find any link for any task you might need."
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://superlist.cc/" />
+        <meta property="og:title" content="Superlist - Find every tool" />
+        <meta
+          property="og:description"
+          content="The Ultimate List of the Internet, find any link for any task you might need."
+        />
+        <meta property="og:image" content="/images/meta/meta-image.png" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://superlist.cc/" />
+        <meta property="twitter:title" content="Superlist - Find every tool" />
+        <meta
+          property="twitter:description"
+          content="The Ultimate List of the Internet, find any link for any task you might need."
+        />
+        <meta property="twitter:image" content="/images/meta/meta-image.png" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"

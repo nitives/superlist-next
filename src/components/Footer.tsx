@@ -3,13 +3,13 @@ import { TypefaceLogo } from "./branding";
 export const Footer = ({ className }: { className: string }) => {
   return (
     <footer className={className}>
-      <a href="/" className="flex w-80 grayscale">
+      <a href="/" className="flex footer-logo grayscale">
         <TypefaceLogo />
       </a>
 
-      <div className="pt-8 content-start items-start flex flex-row flex-nowrap gap-20 h-min justify-start overflow-visible p-[0] relative w-full">
+      <div className="pt-8 content-start items-start flex flex-row flex-nowrap lg:gap-20 gap-12 h-min justify-start overflow-visible p-[0] relative w-full">
         <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
-          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+          <div className="font-bold outline-none flex flex-col justify-start flex-shrink-0">
             <p>Navigation</p>
           </div>
           <div className="footer-links">
@@ -23,18 +23,18 @@ export const Footer = ({ className }: { className: string }) => {
             </a>
           </div>
           <div className="footer-links">
-            <a href="/movies" className="line-through">
+            <a href="/movies" className="">
               Movies
             </a>
           </div>
           <div className="footer-links">
-            <a href="/pandabuy" className="line-through">
+            <a href="/pandabuy" className="">
               Pandabuy
             </a>
           </div>
         </div>
         <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
-          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+          <div className="font-bold outline-none flex flex-col justify-start flex-shrink-0">
             <p>Social</p>
           </div>
           <div className="footer-links"></div>
@@ -46,7 +46,7 @@ export const Footer = ({ className }: { className: string }) => {
           </div>
         </div>
         <div className="hidden content-start items-start flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
-          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+          <div className="font-bold outline-none flex flex-col justify-start flex-shrink-0">
             <p>Support</p>
           </div>
           <div className="footer-links">
@@ -66,7 +66,7 @@ export const Footer = ({ className }: { className: string }) => {
           </div>
         </div>
         <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
-          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+          <div className="font-bold outline-none flex flex-col justify-start flex-shrink-0">
             <p>Legal</p>
           </div>
           <div className="footer-links">

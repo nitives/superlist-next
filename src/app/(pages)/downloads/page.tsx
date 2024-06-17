@@ -44,7 +44,7 @@ export default function Downloads() {
   return (
     <main className="p-2 pt-12">
       <h1 className="text-center text-4xl mb-8 font-bold">Downloads</h1>
-      <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-1 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {downloadsData.map((download) => (
           <div
             key={download.name}

@@ -10,6 +10,10 @@ export const BurgerBar = () => {
     setOpen(!isOpen);
   };
 
+  const closeMenu = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -23,7 +27,7 @@ export const BurgerBar = () => {
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-center scale-[0.8]">
+      <div className="flex items-center justify-center scale-[0.6]">
         <Hamburger size={24} toggled={isOpen} toggle={toggleMenu} />
       </div>
       <div
@@ -32,7 +36,7 @@ export const BurgerBar = () => {
         }`}
       >
         <ul
-          className={`menu-text relative flex flex-col text-foreground z-10 gap-2 text-3xl ${
+          className={`menu-text relative flex flex-col text-foreground z-10 gap-2 ${
             isOpen ? "!opacity-100" : "!opacity-0"
           }`}
         >

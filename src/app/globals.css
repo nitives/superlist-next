@@ -121,6 +121,10 @@ body {
   width: 10vw;
 }
 
+.hamburger-react div {
+  border-radius: 10px;
+}
+
 .bg-texture {
   width: fit-content;
   &.texture-dark {
@@ -337,6 +341,10 @@ div {
       transition: opacity 600ms ease;
     }
   }
+}
+
+.footer-logo {
+  width: clamp(10rem, 20rem, 15rem);
 }
 
 .description {

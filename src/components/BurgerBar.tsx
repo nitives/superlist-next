@@ -36,7 +36,7 @@ export const BurgerBar = () => {
         }`}
       >
         <ul
-          className={`menu-text relative flex flex-col text-foreground z-10 gap-2 ${
+          className={`menu-text relative flex flex-col text-xl text-foreground z-10 gap-2 ${
             isOpen ? "!opacity-100" : "!opacity-0"
           }`}
         >

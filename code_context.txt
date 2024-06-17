@@ -1,0 +1,2292 @@
+// File: src/app/(pages)/api/screenshot.js
+import puppeteer from "puppeteer";
+import fs from "fs";
+import path from "path";
+import sitesData from "../../content/siteData.json" assert { type: "json" };
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const screenshotsDir = path.join(
+  __dirname,
+  "../../../../public/images/cache/captures"
+);
+if (!fs.existsSync(screenshotsDir)) {
+  fs.mkdirSync(screenshotsDir);
+}
+
+async function takeScreenshot(url, filename) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1920, height: 1080 });
+  await page.goto(url, { waitUntil: "networkidle2" });
+  await page.screenshot({ path: filename });
+  await browser.close();
+}
+
+const findBestFaviconURL = async function (page, url) {
+  const rootUrl = new URL(url).protocol + "//" + new URL(url).host;
+  const selectorsToTry = [`link[rel="icon"]`, `link[rel="shortcut icon"]`];
+  let faviconUrlFromDocument = null;
+  for (let i = 0; i < selectorsToTry.length; i++) {
+    const href = await getDOMElementHRef(page, selectorsToTry[i]);
+    if (typeof href === "undefined" || href === null || href.length === 0) {
+      continue;
+    }
+
+    faviconUrlFromDocument = href;
+    break;
+  }
+
+  if (faviconUrlFromDocument === null) {
+    // No favicon link found in document, best URL is likley favicon.ico at root
+    return rootUrl + "/favicon.ico";
+  }
+
+  if (
+    faviconUrlFromDocument.substr(0, 4) === "http" ||
+    faviconUrlFromDocument.substr(0, 2) === "//"
+  ) {
+    // absolute url
+    return faviconUrlFromDocument;
+  } else if (faviconUrlFromDocument.substr(0, 1) === "/") {
+    // favicon relative to root
+    return rootUrl + faviconUrlFromDocument;
+  } else {
+    // favicon relative to current (url) URL
+    return url + "/" + faviconUrlFromDocument;
+  }
+};
+
+async function captureScreenshots() {
+  for (const site of sitesData) {
+    const filename = path.join(
+      screenshotsDir,
+      `${site.name.replace(/\s/g, "_")}.png`
+    );
+    console.log(`Capturing screenshot for ${site.name}`);
+    await takeScreenshot(site.link, filename).catch(
+      (error) => {
+        console.error(`Failed to capture screenshot for ${site.name}:`, error);
+      },
+      await findBestFaviconURL(site.link, filename).catch((error) => {
+        console.error(`Failed to capture screenshot for ${site.name}:`, error);
+      })
+    );
+  }
+}
+
+captureScreenshots();
+
+// File: src/app/(pages)/downloads/page.tsx
+"use client";
+import downloadsData from "../../content/downloadsData.json";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import ColorThief from "colorthief";
+
+export default function Downloads() {
+  const [colors, setColors] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    const colorThief = new ColorThief();
+    const newColors: { [key: string]: string } = {};
+
+    downloadsData.forEach((download) => {
+      const img = new window.Image();
+      img.crossOrigin = "Anonymous";
+      img.src = download.image;
+
+      img.onload = () => {
+        const palette = colorThief.getPalette(img, 8); // Get an array of 8 colors
+        const vibrantColor = getMostVibrantColor(palette);
+        newColors[download.name] = `rgba(${vibrantColor.join(",")}, 0.25)`; // Set opacity here
+        if (Object.keys(newColors).length === downloadsData.length) {
+          setColors(newColors);
+        }
+      };
+    });
+  }, []);
+
+  const getMostVibrantColor = (palette: number[][]) => {
+    let maxVibrancy = 0;
+    let vibrantColor = palette[0];
+    palette.forEach((color) => {
+      const [r, g, b] = color;
+      const vibrancy = Math.max(r, g, b) - Math.min(r, g, b); // Simple vibrancy measure
+      if (vibrancy > maxVibrancy) {
+        maxVibrancy = vibrancy;
+        vibrantColor = color;
+      }
+    });
+    return vibrantColor;
+  };
+
+  return (
+    <main className="p-2 pt-12">
+      <h1 className="text-center text-4xl mb-8 font-bold">Downloads</h1>
+      <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-4">
+        {downloadsData.map((download) => (
+          <div
+            key={download.name}
+            className="p-4 rounded-[24px] bg-ambient hover:bg-[--bg-color] transition-colors duration-300 ease-in-out"
+            style={
+              {
+                "--bg-color": colors[download.name] || "transparent",
+              } as React.CSSProperties
+            }
+          >
+            <div className="overflow-hidden flex items-center align-middle justify-center size-fit w-auto h-auto">
+              <Image
+                src={download.image}
+                alt={`${download.name} image`}
+                width={500}
+                height={300}
+                className="rounded-lg mb-2 object-cover aspect-video border"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold truncate max-w-[80%]">
+                  {download.name}
+                </h2>
+                <p className="text-sm font-bold text-muted-foreground truncate text-left">
+                  {download.version}
+                </p>
+              </div>
+              <div className="relative group">
+                <p className="mt-1 opacity-70 truncate description">
+                  {download.description}
+                </p>
+                {download.description && (
+                  <div className="absolute left-0 w-full p-2 bg-background text-opacity-70 rounded-md shadow-lg border group-hover:block description-tooltip">
+                    {download.description}
+                  </div>
+                )}
+              </div>
+              {download.important && (
+                <p className="mt-2 bg-destructive/10 p-2 border border-destructive text-destructive-foreground rounded-md text-xs">
+                  {download.important}
+                </p>
+              )}
+              <a
+                href={download.downloadLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-3 text-center bg-primary hover:bg-primary/95 text-primary-foreground py-2 px-4 rounded-lg"
+              >
+                Download
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+// File: src/app/(pages)/legal/cookies/page.tsx
+export default function Cookies() {
+  return (
+    <main className="p-2">
+      <p>Cookies</p>
+    </main>
+  );
+}
+
+// File: src/app/(pages)/legal/privacy/page.tsx
+export default function Privacy() {
+  return (
+    <main className="p-2">
+      <p>Privacy</p>
+    </main>
+  );
+}
+
+// File: src/app/(pages)/legal/terms/page.tsx
+export default function Terms() {
+  return (
+    <main className="p-2">
+      <p>Terms</p>
+    </main>
+  );
+}
+
+// File: src/app/(pages)/sites/[sitename]/page.tsx
+"use client";
+import { usePathname } from "next/navigation";
+import sitesData from "../../../content/siteData.json";
+import Image from "next/image";
+import { Button } from "@/components/customui/Button";
+import { BookmarkIcon } from "@heroicons/react/24/outline";
+
+export default function SiteDetails() {
+  const pathname = usePathname();
+  const lastSegment = pathname.split("/").pop();
+  const site = sitesData.find(
+    (site) => site.name.toLowerCase() === lastSegment
+  );
+  console.log(
+    "Hey you're on the",
+    site?.name,
+    "page right now, what are you doing here in the console?"
+  );
+
+  return (
+    <main className="p-8 pt-12">
+      {site ? (
+        <div className="flex justify-center gap-9">
+          <div className="grid justify-end w-full">
+            <Image
+              priority
+              className="page-site border rounded-[10px]"
+              src={site.imageSrc}
+              height={300}
+              width={500}
+              alt={`Photo of the site ${site.name}`}
+            />
+          </div>
+
+          <div className="w-full grid justify-start">
+            <section>
+              <h1 className="font-bold text-[3vw]">{site.name}</h1>
+              <div className="w-fit flex gap-1 -mt-2 mb-1">
+                {site.categories.map((category, index) => (
+                  <p
+                    key={index}
+                    className="bg-foreground/5 p-1 border rounded-md flex text-xs"
+                  >
+                    {category}
+                  </p>
+                ))}
+              </div>
+              <div className="">
+                <p className="z-0 text-[0.8vw] max-w-96 opacity-60 max-h-[7.9999rem] row">
+                  {site.description}
+                </p>
+                <button className="text-foreground/60 text-sm cursor-pointer z-20 relative">
+                  Read more
+                </button>
+              </div>
+
+              <div className="w-fit flex gap-1 py-2">
+                {site.important && (
+                  <p className="max-w-[24rem] opacity-50 bg-destructive/10 p-1 border border-destructive text-destructive-foreground rounded-md flex text-xs">
+                    {site.important}
+                  </p>
+                )}
+              </div>
+              <div className="gap-5 flex z-10 relative top-[-28px]">
+                <Button
+                  size="lg"
+                  href={site.link}
+                  className="mt-4 items-center z-[inherit]"
+                >
+                  Visit
+                </Button>
+
+                <Button
+                  disabled
+                  variant="disabled"
+                  size="lg"
+                  className="z-[inherit] mt-4 justify-center items-center gap-2 px-5 bg-foreground/5 hover:bg-foreground/5 active:bg-foreground/10 text-foreground"
+                >
+                  <BookmarkIcon className="stroke-foreground w-4 stroke-[2px]" />{" "}
+                  Save
+                </Button>
+              </div>
+            </section>
+          </div>
+        </div>
+      ) : (
+        <p>Site not found</p>
+      )}
+    </main>
+  );
+}
+
+// File: src/app/content/downloadsData.json
+[
+  {
+    "name": "FL Studio 21",
+    "version": "v21.2.3",
+    "description": "FL Studio 21",
+    "important": "",
+    "image": "/images/cache/downloads/flstudio.png",
+    "downloadLink": "https://download843.mediafire.com/yrkqj9phqo6gFbflia08cMwEErrJun9ehSopl0tH17gp9-5m5DAMp97YbG3JCWyzFxYZvAEWk7aFWzD4VNnMt2pBBaa6adpzebj0nCZlhkvectNGJVPH_ztFRxZ7ivB859WO4nWRsykNK5w_1G0WR9Bs9hOAJ5ZLYfR7XQl95DzNhQ/kw72xzwwbwpwozo/FL+Studio+Producer+Edition+v21.2.3+-+Superlist.zip"
+  },
+  {
+    "name": "Xpand!2",
+    "version": "v2.2.7",
+    "description": "Xpand!2 VST",
+    "important": "",
+    "image": "/images/cache/downloads/xpand2.jpg",
+    "downloadLink": "https://download1531.mediafire.com/wsl1tani4exgsyo4eZBaPbCZHn4cjmK460CrGrcU82y6e19ybSC_5V6YjWfVHgVQZSMFECBUc9EDjorATdh_DsUf9DxU4zluWjEFozYV685qkGmR84dW7JHXOUCIodxcWxQuSeo5cEsxKUIV2SuZfaPvfdQ5mF7_WUcVKLo3dWih/6rfjvpme5vl1wq0/Xpand+v2.2.7++-+Superlist.zip"
+  },
+  {
+    "name": "Adobe After Effects 2024",
+    "version": "v24.4.1.002",
+    "description": "Adobe After Effects 2024 | Multilingual",
+    "important": "",
+    "image": "/images/cache/downloads/aftereffects.jpeg",
+    "downloadLink": "https://download843.mediafire.com/yrkqj9phqo6gFbflia08cMwEErrJun9ehSopl0tH17gp9-5m5DAMp97YbG3JCWyzFxYZvAEWk7aFWzD4VNnMt2pBBaa6adpzebj0nCZlhkvectNGJVPH_ztFRxZ7ivB859WO4nWRsykNK5w_1G0WR9Bs9hOAJ5ZLYfR7XQl95DzNhQ/kw72xzwwbwpwozo/FL+Studio+Producer+Edition+v21.2.3+-+Superlist.zip"
+  }
+]
+
+// File: src/app/content/localization/languages/data.ts
+const data = {
+  en: {
+    currentVersion: "v4.0",
+    heroTitle: {
+      1: "Websites curated from the",
+      2: "dark side",
+      3: "of the web",
+    },
+    filters: {
+      popular: "Popular",
+      filter: "Filter",
+      search: "Search",
+      reset: "Reset",
+      categories: "Categories",
+      tags: "Tags",
+      languages: "Languages",
+      themes: "Themes",
+      types: "Types",
+      status: "Status",
+      sort: "Sort",
+    },
+  },
+  es: {
+    currentVersion: "v4.0",
+    heroTitle: {
+      1: "Sitios web seleccionados desde el",
+      2: "lado oscuro",
+      3: "de la web",
+    },
+    filters: {
+      popular: "Popular",
+      filter: "Filtro",
+      search: "Buscar",
+      reset: "Restablecer",
+      categories: "Categorías",
+      tags: "Etiquetas",
+      languages: "Idiomas",
+      themes: "Temas",
+      types: "Tipos",
+      status: "Estado",
+      sort: "Ordenar",
+    },
+  },
+  pt: {
+    currentVersion: "v4.0",
+    heroTitle: {
+      1: "Sites selecionados do",
+      2: "lado escuro",
+      3: "da web",
+    },
+    filters: {
+      popular: "Popular",
+      filter: "Filtro",
+      search: "Buscar",
+      reset: "Restaurar",
+      categories: "Categorias",
+      tags: "Tags",
+      languages: "Idiomas",
+      themes: "Temas",
+      types: "Tipos",
+      status: "Estado",
+      sort: "Ordenar",
+    },
+  },
+  ru: {
+    currentVersion: "v4.0",
+    heroTitle: {
+      1: "Веб-сайты, отобранные из",
+      2: "темной стороны",
+      3: "интернета",
+    },
+    filters: {
+      popular: "Популярное",
+      filter: "Фильтр",
+      search: "Поиск",
+      reset: "Сброс",
+      categories: "Категории",
+      tags: "Теги",
+      languages: "Языки",
+      themes: "Темы",
+      types: "Типы",
+      status: "Статус",
+      sort: "Сортировать",
+    },
+  },
+  zh: {
+    currentVersion: "v4.0",
+    heroTitle: {
+      1: "来自",
+      2: "黑暗面",
+      3: "的网站",
+    },
+    filters: {
+      popular: "流行",
+      filter: "筛选",
+      search: "搜索",
+      reset: "重置",
+      categories: "分类",
+      tags: "标签",
+      languages: "语言",
+      themes: "主题",
+      types: "类型",
+      status: "状态",
+      sort: "排序",
+    },
+  },
+  ar: {
+    currentVersion: "v4.0",
+    heroTitle: {
+      1: "مواقع ويب مختارة من",
+      2: "الجانب المظلم",
+      3: "للويب",
+    },
+    filters: {
+      popular: "الأكثر شيوعًا",
+      filter: "فلتر",
+      search: "بحث",
+      reset: "إعادة تعيين",
+      categories: "الفئات",
+      tags: "العلامات",
+      languages: "اللغات",
+      themes: "الموضوعات",
+      types: "الأنواع",
+      status: "الحالة",
+      sort: "ترتيب",
+    },
+  },
+};
+
+export default data;
+
+// File: src/app/content/localization/manager.ts
+import data from "./languages/data";
+import { Config } from "./types/config";
+
+const getConfig = (language: string): Config => {
+  const defaultLang = "en";
+  const langMap: { [key: string]: string } = {
+    es: "es",
+    "es-ES": "es",
+    "pt-BR": "pt",
+    pt: "pt",
+    ru: "ru",
+    "ru-RU": "ru",
+    zh: "zh",
+    "zh-CN": "zh",
+    "zh-TW": "zh",
+    ar: "ar",
+    "ar-SA": "ar",
+  };
+
+  const langKey = langMap[language] || defaultLang;
+  return data[langKey as keyof typeof data];
+};
+
+export default getConfig;
+
+// File: src/app/content/localization/types/config.d.ts
+export interface Config {
+  currentVersion: any;
+  heroTitle: any;
+  filters: any;
+}
+
+// File: src/app/content/siteData.json
+[
+  {
+    "name": "Superlist",
+    "categories": ["Goat", "Superlist"],
+    "description": "A comprehensive list of the greatest websites.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/Superlist.png",
+    "favicon": "/images/favicons/superlist.ico",
+    "link": "https://www.superlist.cc",
+    "socialLinks": {
+      "twitter": "https://twitter.com/superlist",
+      "github": "https://github.com/superlist"
+    }
+  },
+  {
+    "name": "FileCR",
+    "categories": ["Pirate"],
+    "description": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam possimus perferendis eveniet, autem itaque tempore dolor quos vitae nobis consectetur mollitia aut nisi nulla accusantium voluptatem. Animi commodi sit excepturi. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam possimus perferendis eveniet, autem itaque tempore dolor quos vitae nobis consectetur mollitia aut nisi nulla accusantium voluptatem. Animi commodi sit excepturi.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/FileCR.png",
+    "favicon": "/images/favicons/filecr.ico",
+    "link": "https://www.filecr.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/filecr",
+      "github": "https://github.com/filecr"
+    }
+  },
+  {
+    "name": "FileZack",
+    "categories": ["Pirate"],
+    "description": "A platform for downloading various files.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/4Download.png",
+    "favicon": "/images/favicons/4download.ico",
+    "link": "https://filezack.com/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/4download",
+      "github": "https://github.com/4download"
+    }
+  },
+  {
+    "name": "SoftProber",
+    "categories": ["Pirate"],
+    "description": "Software download and review site.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/SoftProber.png",
+    "favicon": "/images/favicons/softprober.ico",
+    "link": "https://www.softprober.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/softprober",
+      "github": "https://github.com/softprober"
+    }
+  },
+  {
+    "name": "Movie-Web",
+    "categories": ["Entertainment"],
+    "description": "One of the best sites for streaming movies, you can also sync you're watched media.",
+    "important": "This site has been deprecated aka the developers were forced to shut the site down but you can still use the Movie-Web through community links",
+    "imageSrc": "/images/cache/captures/Movie-Web.png",
+    "favicon": "/images/favicons/movie-web.ico",
+    "link": "https://scootydooter.vercel.app/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/movie-web",
+      "github": "https://github.com/movie-web"
+    }
+  },
+  {
+    "name": "PressPlay",
+    "categories": ["Entertainment"],
+    "description": "A platform for streaming videos and music.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/PressPlay.png",
+    "favicon": "/images/favicons/pressplay.ico",
+    "link": "https://www.pressplay.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/pressplay",
+      "github": "https://github.com/pressplay"
+    }
+  },
+  {
+    "name": "GFXFather",
+    "categories": ["Creative"],
+    "description": "Graphic design resources and tutorials.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/gfxfather.ico",
+    "link": "https://www.gfxfather.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/gfxfather",
+      "github": "https://github.com/gfxfather"
+    }
+  },
+  {
+    "name": "Anicrush",
+    "categories": ["Entertainment"],
+    "description": "Anime streaming and download site.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/anicrush.ico",
+    "link": "https://www.anicrush.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/anicrush",
+      "github": "https://github.com/anicrush"
+    }
+  },
+  {
+    "name": "Animeflix",
+    "categories": ["Entertainment"],
+    "description": "Watch and download anime series.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/animeflix.ico",
+    "link": "https://www.animeflix.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/animeflix",
+      "github": "https://github.com/animeflix"
+    }
+  },
+  {
+    "name": "MangoAI",
+    "categories": ["AI"],
+    "description": "Artificial intelligence news and resources.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/mangoai.ico",
+    "link": "https://www.mangoai.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/mangoai",
+      "github": "https://github.com/mangoai"
+    }
+  },
+  {
+    "name": "MangaDex",
+    "categories": ["Entertainment"],
+    "description": "Online manga reader and community.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/mangadex.ico",
+    "link": "https://www.mangadex.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/mangadex",
+      "github": "https://github.com/mangadex"
+    }
+  },
+  {
+    "name": "Comick",
+    "categories": ["Entertainment"],
+    "description": "Comic book reader and download site.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/comick.ico",
+    "link": "https://www.comick.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/comick",
+      "github": "https://github.com/comick"
+    }
+  },
+  {
+    "name": "NTSCQ",
+    "categories": ["Creative"],
+    "description": "Creative design and digital art resources.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/ntscq.ico",
+    "link": "https://www.ntscq.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/ntscq",
+      "github": "https://github.com/ntscq"
+    }
+  },
+  {
+    "name": "noclip.website",
+    "categories": ["Dev"],
+    "description": "3D visualization and game development resources.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/noclip.ico",
+    "link": "https://www.noclip.website",
+    "socialLinks": {
+      "twitter": "https://twitter.com/noclip",
+      "github": "https://github.com/noclip"
+    }
+  },
+  {
+    "name": "Anna's Archive",
+    "categories": ["Entertainment", "Books"],
+    "description": "Online book archive and library.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/annasarchive.ico",
+    "link": "https://www.annasarchive.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/annasarchive",
+      "github": "https://github.com/annasarchive"
+    }
+  },
+  {
+    "name": "GenP",
+    "categories": ["Design", "Creative", "VFX", "GFX"],
+    "description": "Adobe Creative Cloud - r/AdobeZii is for Mac.",
+    "important": "",
+    "imageSrc": "/images/placeholder/placeholder2.png",
+    "favicon": "/images/favicons/genp.ico",
+    "link": "https://www.reddit.com/r/GenP/wiki/redditgenpguides/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/genp",
+      "github": "https://github.com/genp"
+    }
+  }
+]
+
+// File: src/app/globals.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0, 0%, 3.9%;
+
+    --background-x: hsla(0, 0%, 98%, 1);
+    --foreground-x: hsla(0, 0%, 3.9%, 1);
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+
+    --radius: 0.5rem;
+    --border-x: hsla(0, 0%, 0%, 0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 0 0% 3.9%;
+      --foreground: 0 0% 98%;
+
+      --background-x: hsla(0, 0%, 3.9%, 1);
+      --foreground-x: hsla(0, 0%, 98%, 1);
+
+      --card: 0 0% 3.9%;
+      --card-foreground: 0 0% 98%;
+
+      --popover: 0 0% 3.9%;
+      --popover-foreground: 0 0% 98%;
+
+      --primary: 0 0% 98%;
+      --primary-foreground: 0 0% 9%;
+
+      --secondary: 0 0% 14.9%;
+      --secondary-foreground: 0 0% 98%;
+
+      --muted: 0 0% 14.9%;
+      --muted-foreground: 0 0% 63.9%;
+
+      --accent: 0 0% 14.9%;
+      --accent-foreground: 0 0% 98%;
+
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+
+      --border: 0 0% 14.9%;
+      --input: 0 0% 14.9%;
+      --ring: 0 0% 83.1%;
+
+      --border-x: hsla(0, 0%, 100%, 0.05);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+* {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  &::selection {
+    background-color: var(--theme-x);
+    color: currentColor;
+  }
+}
+
+body {
+  --dot-color: rgba(255, 255, 255, 0.1);
+  --dot-size: 1px;
+  --dot-space: 22px;
+  background: linear-gradient(
+        90deg,
+        var(--background-x) calc(var(--dot-space) - var(--dot-size)),
+        transparent 1%
+      )
+      center / var(--dot-space) var(--dot-space),
+    linear-gradient(
+        var(--background-x) calc(var(--dot-space) - var(--dot-size)),
+        transparent 1%
+      )
+      center / var(--dot-space) var(--dot-space),
+    var(--dot-color);
+}
+
+.nav-m {
+  margin-inline: auto;
+  width: 10vw;
+}
+
+.bg-texture {
+  width: fit-content;
+  &.texture-dark {
+    opacity: 0.1;
+    display: none;
+  }
+  &.texture-light {
+    opacity: 0.2;
+    display: block;
+    position: absolute;
+  }
+}
+
+.menu {
+  padding: 0;
+  position: absolute;
+  z-index: -10;
+  top: -50px;
+  right: -43%;
+  width: 100vw;
+  height: 1000vh;
+  overflow: hidden;
+  transition-property: height;
+  transition: 0.5s ease-in-out;
+}
+
+.menu-text {
+  opacity: 1;
+  transition: opacity 1s ease-in-out 0.6s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bg-texture {
+    width: fit-content;
+    &.texture-dark {
+      display: block;
+      position: absolute;
+    }
+    &.texture-light {
+      display: none;
+      position: absolute;
+    }
+  }
+}
+
+.super-invert {
+  filter: invert(1);
+}
+@media (prefers-color-scheme: dark) {
+  .super-invert {
+    filter: invert(0);
+  }
+}
+
+.hero-text {
+  text-align: center;
+  letter-spacing: -0.05em;
+  line-height: 3.5vw;
+  font-size: 4.2vw;
+  width: 35vw;
+}
+
+@media (max-width: 800px) {
+  .hero-text {
+    text-align: center;
+    letter-spacing: -0.05em;
+    line-height: 10vw;
+    font-size: 12.2vw;
+    width: 90vw;
+  }
+}
+
+.hero-label {
+  scale: 0.8;
+  font-size: 1em;
+  margin: auto;
+}
+
+.site {
+  aspect-ratio: 1.48 / 1;
+  width: 1080px;
+}
+
+.site-h div img {
+  width: auto;
+  object-fit: cover;
+  /* filter: invert(1);
+  opacity: 0.05; */
+}
+
+.row::after {
+  z-index: 0;
+  content: "";
+  width: 383px;
+  height: 125px;
+  position: absolute;
+  left: 51vw;
+  top: 285px;
+  background: linear-gradient(transparent, white);
+}
+
+@media (prefers-color-scheme: dark) {
+  .row::after {
+    background: linear-gradient(transparent, var(--background-x) 60px);
+  }
+}
+
+.site-h {
+  background-color: transparent;
+  &:hover {
+    background-color: hsla(0, 0%, 0%, 0.05);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .site-h {
+    background-color: transparent;
+    &:hover {
+      background-color: hsla(0, 0%, 100%, 0.01);
+    }
+  }
+}
+
+.under-shadow {
+  box-shadow: 0 1px 0 0 hsl(0, 0%, 86%);
+}
+
+.under-shadow-destructive {
+  box-shadow: 0 1px 0 0 hsl(0, 56%, 35%);
+}
+
+.main-border {
+  border: 1px solid hsla(0, 0%, 0%, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .main-border {
+    border: 1px solid hsla(0, 0%, 100%, 0.05);
+  }
+}
+
+#radix-\:r2\: button {
+  display: none;
+}
+
+#searchInput {
+  border-radius: calc(1rem - 8px);
+}
+
+input[type="search"]::-ms-clear {
+  display: none;
+  width: 0;
+  height: 0;
+}
+input[type="search"]::-ms-reveal {
+  display: none;
+  width: 0;
+  height: 0;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+.search-con button {
+  position: absolute;
+  top: auto;
+}
+
+.fill-social {
+  filter: invert(0);
+}
+
+@media (prefers-color-scheme: dark) {
+  .fill-social {
+    filter: invert(1);
+  }
+}
+
+.site-grid {
+  display: grid;
+  flex: none;
+  gap: 0;
+  grid-auto-rows: minmax(0, 1fr);
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+  grid-template-rows: repeat(1, minmax(0, 1fr));
+  height: min-content;
+  justify-content: center;
+  overflow: visible;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+@media (max-width: 1280px) {
+  .site-grid {
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .site-grid {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .site-grid {
+    grid-template-columns: repeat(1, minmax(200px, 1fr));
+  }
+}
+
+.page-site {
+  width: auto;
+  height: auto;
+}
+
+div {
+  &.footer-links a {
+    opacity: 0.8;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    &:hover {
+      opacity: 0.5;
+      transition: opacity 600ms ease;
+    }
+  }
+}
+
+.description {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.group:hover .description-tooltip {
+  display: block;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  transition-delay: 0.5s;
+}
+
+.group:hover .description-tooltip {
+  opacity: 1;
+}
+
+.description-tooltip {
+  pointer-events: none;
+  border-radius: 14px;
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  position: absolute;
+  z-index: 10;
+  max-width: 300px; /* Adjust as needed */
+  background-color: hsla(0, 0%, 98%, 0.9);
+  color: white;
+  padding: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .description-tooltip {
+    color: white;
+    background-color: hsla(0, 0%, 4%, 0.9);
+  }
+}
+
+// File: src/app/layout.tsx
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Footer, Navbar, ThemeProvider } from "@/components";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Superlist",
+  description:
+    "The Ultimate List of the Internet, find any link for any task you might need.",
+  icons: {
+    icon: [
+      {
+        media: "(prefers-color-scheme: light)",
+        url: "/favicon.ico",
+        href: "/favicon.ico",
+      },
+      {
+        media: "(prefers-color-scheme: dark)",
+        url: "/favicon-white.ico",
+        href: "/favicon-white.ico",
+      },
+    ],
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          {children}
+          <Footer className="footer w-full mt-20 px-8 py-12 border-t" />
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+
+// File: src/app/not-found.tsx
+import Link from "next/link";
+
+export default function NotFound() {
+  return (
+    <main className="p-2 pt-12">
+      <div className="grid items-center justify-center text-center h-56">
+        <div>
+          <p className="leading-[20px]">
+            <br /> &nbsp;&#x2571;|&#x3001;
+            <br /> (˚ˎ 。7
+            <br /> &nbsp;|&#x3001;˜〵
+            <br />
+            &nbsp; &nbsp;&nbsp;じしˍ,)&#x30CE;
+          </p>
+        </div>
+        <div className="font-mono">
+          <p>This page doesn&apos;t exist yet</p>
+          <Link
+            href="/"
+            className="text-muted-foreground hover:text-primary transition-all duration-300 ease-in-out"
+          >
+            Return
+          </Link>
+        </div>
+      </div>
+
+      <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-4"></div>
+    </main>
+  );
+}
+
+// File: src/app/page.tsx
+"use client";
+import { Site, SiteContainer, FilterBar, AniBG } from "@/components";
+import { Pill } from "@/components/customui";
+import sitesData from "./content/siteData.json";
+import React from "react";
+import { useEffect, useState } from "react";
+import getConfig from "./content/localization/manager";
+import { Config } from "./content/localization/types/config";
+
+interface SiteData {
+  name: string;
+  categories: string[];
+  imageSrc: string;
+  link: string;
+}
+
+export default function Home() {
+  const [language, setLanguage] = useState<string>("en");
+  const [config, setConfig] = useState<Config | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setLanguage(navigator.language);
+    }
+  }, []);
+
+  useEffect(() => {
+    setConfig(getConfig(language));
+  }, [language]);
+
+  if (!config) {
+    return null;
+  }
+
+  return (
+    <main className="p-2">
+      <div className="w-full mx-auto my-0 ">
+        <div className="mt-10 my-5 items-center flex-col flex ">
+          <Pill href="./" className="">
+            <p>Superlist 3.7</p>
+          </Pill>
+          <div className="uppercase text-center z-10">
+            <a className="hero-text text-foreground font-bold text-center align-middle tracking-tighter inline-block mt-5">
+              {config.heroTitle[1]}{" "}
+              <span className="text-[1em] opacity-50">
+                {config.heroTitle[2]}
+              </span>{" "}
+              {config.heroTitle[3]}
+            </a>
+          </div>
+          <AniBG />
+        </div>
+      </div>
+
+      <FilterBar />
+      {/* <p>DEV - Current language is: {language}</p> */}
+
+      <SiteContainer>
+        {sitesData.map((site: SiteData, index: number) => (
+          <Site
+            key={index}
+            name={site.name}
+            categories={site.categories}
+            imageSrc={site.imageSrc}
+            link={site.link}
+          />
+        ))}
+      </SiteContainer>
+    </main>
+  );
+}
+
+// File: src/components/AniBG.tsx
+import Image from "next/image";
+import darkTexture from "../../public/images/bg-dark-texture1.png";
+import lightTexture from "../../public/images/bg-light-texture1.png";
+
+export const AniBG = () => {
+  return (
+    <div className="mx-auto hidden justify-center items-center -z-10">
+      <Image
+        className="bg-texture texture-dark h-[30rem]"
+        src={darkTexture}
+        alt="Dark Mode Background Texture"
+        width={3168}
+        height={2448}
+      />
+      <Image
+        className="bg-texture texture-light h-[30rem]"
+        src={lightTexture}
+        alt="Light Mode Background Texture"
+        width={3168}
+        height={2448}
+      />
+    </div>
+  );
+};
+
+// File: src/components/branding/index.ts
+export * from "./Logo1";
+export * from "./TypefaceLogo";
+
+// File: src/components/branding/Logo1.tsx
+import Image from "next/image";
+export const Logo1 = () => {
+  return (
+    <>
+      <Image
+        className="super-invert hover:opacity-70 transition-opacity duration-300 "
+        src="/images/favicon-white.png"
+        width={24}
+        height={24}
+        alt="Superlist logo"
+      />
+    </>
+  );
+};
+
+// File: src/components/branding/TypefaceLogo.tsx
+import Image from "next/image";
+export const TypefaceLogo = () => {
+  return (
+    <>
+      <Image
+        className="super-invert w-full hover:opacity-70 transition-opacity duration-300"
+        src="/images/super-typeface-white.png"
+        width={1440}
+        height={201}
+        alt="Superlist logo"
+      />
+    </>
+  );
+};
+
+// File: src/components/BurgerBar.tsx
+"use client";
+import { Cross as Hamburger } from "hamburger-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+
+export const BurgerBar = () => {
+  const [isOpen, setOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  return (
+    <div className="relative">
+      <div className="flex items-center justify-center scale-[0.8]">
+        <Hamburger size={24} toggled={isOpen} toggle={toggleMenu} />
+      </div>
+      <div
+        className={`menu bg-background ${
+          isOpen ? "!h-[1000vh] !py-[120px] !px-[25px]" : "!h-0"
+        }`}
+      >
+        <ul
+          className={`menu-text relative flex flex-col text-foreground z-10 gap-2 ${
+            isOpen ? "!opacity-100" : "!opacity-0"
+          }`}
+        >
+          <Link href="./" className="text-3xl">
+            Home
+          </Link>
+          <Link href="./downloads" className="text-3xl">
+            Downloads
+          </Link>
+          <Link href="./" className="text-3xl">
+            Services
+          </Link>
+          <Link href="./" className="text-3xl">
+            Contact
+          </Link>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+// File: src/components/customui/Button.md
+
+# Superlist Button
+
+Variants:
+default
+destructive
+outline
+subtle
+ghost
+link
+
+Sizes:
+default
+sm
+lg
+
+// File: src/components/customui/Button.tsx
+import * as React from "react";
+import Link from "next/link";
+import { VariantProps, cva } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+
+const buttonVariants = cva(
+  "bg-foreground text-background pt-[10px] pb-2 px-3 rounded-lg inline-flex items-center justify-center",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-foreground text-background hover:bg-foreground/95 under-shadow",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive-100 dark:hover:bg-red-600 under-shadow-destructive",
+        disabled:
+          "bg-foreground text-background hover:bg-foreground/95 cursor-not-allowed",
+        outline:
+          "bg-transparent text-foreground border border-[--border-x] hover:bg-foreground/5",
+        subtle:
+          "bg-[#0a0a0a]/5 text-foreground hover:bg-[#0a0a0a]/15 dark:bg-foreground/5",
+        ghost:
+          "bg-transparent dark:bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-100 dark:hover:text-neutral-100 data-[state=open]:bg-transparent dark:data-[state=open]:bg-transparent",
+        link: "bg-transparent dark:bg-transparent underline-offset-4 hover:underline text-neutral-900 dark:text-neutral-300 hover:bg-transparent dark:hover:bg-transparent",
+      },
+      size: {
+        default: "h-10 pt-[10px] pb-2 px-4",
+        sm: "h-9 px-2 rounded-lg",
+        lg: "h-11 px-8 rounded-lg",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  href?: string;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, children, href, variant, size, ...props }, ref) => {
+    if (href) {
+      return (
+        <Link
+          href={href}
+          className={cn(buttonVariants({ variant, size, className }))}
+        >
+          {children}
+        </Link>
+      );
+    }
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+Button.displayName = "Button";
+
+export { Button, buttonVariants };
+
+// File: src/components/customui/Filter.tsx
+"use client";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import { Button } from "./Button";
+
+/**
+ * The `Filter` component provides a dropdown menu with various filtering options for the user interface.
+ * It uses the `@headlessui/react` library to implement the dropdown menu functionality.
+ * The menu includes options to edit, duplicate, archive, and delete items.
+ * The component is exported as a default export.
+ */
+export const Filter = () => {
+  return (
+    <div className="">
+      <Menu>
+        <MenuButton>
+          <div>
+            <Button variant={"subtle"}>
+              Filter
+              <ChevronDownIcon className="size-4 relative left-1" />
+            </Button>
+          </div>
+        </MenuButton>
+        <Transition
+          enter="transition ease-out duration-75"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
+        >
+          <MenuItems
+            anchor="bottom end"
+            className="absolute z-10 mt-2 w-48 origin-top-right bg-background/50 rounded-xl main-border backdrop-blur-[5px] shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          >
+            <div className="p-1">
+              <MenuItem>
+                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
+                  Pirate
+                </button>
+              </MenuItem>
+              <MenuItem>
+                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
+                  Entertainment
+                </button>
+              </MenuItem>
+              {/* <div className="my-1 h-px bg-white/5" /> */}
+              <MenuItem>
+                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
+                  Creative
+                </button>
+              </MenuItem>
+              <MenuItem>
+                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
+                  AI
+                </button>
+              </MenuItem>
+            </div>
+          </MenuItems>
+        </Transition>
+      </Menu>
+    </div>
+  );
+};
+
+// File: src/components/customui/index.ts
+export * from "./Pill";
+
+// File: src/components/customui/Pill.tsx
+import { ChevronRightIcon } from "lucide-react";
+
+export const Pill = ({
+  children,
+  className,
+  href,
+}: {
+  children: React.ReactNode;
+  className: string;
+  href: string;
+}) => {
+  return (
+    <div className={className}>
+      <a
+        href={href}
+        className="flex items-center h-7 backdrop-blur-md text-xs px-3 bg-foreground/10 border dark:border-foreground/[0.05] border-neutral-500/20 rounded-full whitespace-nowrap decoration-none cursor-pointer"
+      >
+        {children}
+        <ChevronRightIcon className="size-4 relative left-[2px]" />
+      </a>
+    </div>
+  );
+};
+
+// File: src/components/customui/Popular.tsx
+import { Button } from "./Button";
+
+export const Popular = () => {
+  return <Button variant={"subtle"}>Popular</Button>;
+};
+
+// File: src/components/FilterBar.tsx
+import { Filter } from "@/components";
+import { Popular } from "@/components";
+
+export const FilterBar = () => {
+  return (
+    <div className="w-full mx-auto px-5 py-5 justify-between flex">
+      <Popular />
+      <Filter />
+    </div>
+  );
+};
+
+// File: src/components/Footer.tsx
+import { TypefaceLogo } from "./branding";
+
+export const Footer = ({ className }: { className: string }) => {
+  return (
+    <footer className={className}>
+      <a href="/" className="flex w-80 grayscale">
+        <TypefaceLogo />
+      </a>
+
+      <div className="pt-8 content-start items-start flex flex-row flex-nowrap gap-20 h-min justify-start overflow-visible p-[0] relative w-full">
+        <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
+          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+            <p>Navigation</p>
+          </div>
+          <div className="footer-links">
+            <a href="/og" className="">
+              OG
+            </a>
+          </div>
+          <div className="footer-links">
+            <a href="/downloads" className="">
+              Downloads
+            </a>
+          </div>
+          <div className="footer-links">
+            <a href="/movies" className="line-through">
+              Movies
+            </a>
+          </div>
+          <div className="footer-links">
+            <a href="/pandabuy" className="line-through">
+              Pandabuy
+            </a>
+          </div>
+        </div>
+        <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
+          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+            <p>Social</p>
+          </div>
+          <div className="footer-links"></div>
+          <div className="footer-links">
+            <a href="https://discord.gg/ga2ENQvczq">Discord</a>
+          </div>
+          <div className="footer-links">
+            <a href="https://x.com/nitves">Twitter</a>
+          </div>
+        </div>
+        <div className="hidden content-start items-start flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
+          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+            <p>Support</p>
+          </div>
+          <div className="footer-links">
+            <a href="/pandabuy" className="line-through">
+              Websites
+            </a>
+          </div>
+          <div className="footer-links">
+            <a href="/pandabuy" className="line-through">
+              Profiles
+            </a>
+          </div>
+          <div className="footer-links">
+            <a href="/pandabuy" className="line-through">
+              Marketplace
+            </a>
+          </div>
+        </div>
+        <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-center overflow-visible p-[0] relative w-min">
+          <div className="font-mono font-bold outline-none flex flex-col justify-start flex-shrink-0">
+            <p>Legal</p>
+          </div>
+          <div className="footer-links">
+            <a href="/legal/privacy">Privacy</a>
+          </div>
+          <div className="footer-links">
+            <a href="/legal/terms">Terms</a>
+          </div>
+          <div className="footer-links">
+            <a href="/legal/cookies">Cookies</a>
+          </div>
+        </div>
+      </div>
+      <div className="pt-10 text-xs opacity-50">
+        <p>
+          © 2024 Superlist CC. All Rights Reserved. Made with ❤️ in Florida,
+          United States.
+        </p>
+      </div>
+    </footer>
+  );
+};
+
+{
+  /* <div className="hidden content-start items-start flex flex-row flex-nowrap gap-20 h-min justify-start overflow-visible p-[0] relative w-full">
+        <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-start overflow-visible p-[0] relative w-full">
+          <div className="framer-1j18gw5">
+            <p className="framer-text">Navigation</p>
+          </div>
+          <div className="framer-1p523dq">
+            <p className="framer-text">
+              <a className="framer-text framer-styles-preset-10g127g" href="./">
+                Websites
+              </a>
+            </p>
+          </div>
+          <div className="framer-1s4ap0v" data-o-authenticated="1">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="./websites"
+              >
+                Websites
+              </a>
+            </p>
+          </div>
+          <div className="framer-1nibij3">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="./profiles"
+              >
+                Profiles
+              </a>
+            </p>
+          </div>
+          <div className="framer-2jog73">
+            <p className="framer-text">
+              <a className="framer-text framer-styles-preset-10g127g" href="./">
+                Marketplace
+              </a>
+            </p>
+          </div>
+        </div>
+        <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-start overflow-visible p-[0] relative w-full">
+          <div className="framer-1xbcxpo">
+            <p className="framer-text">Dark</p>
+          </div>
+          <div className="framer-1xuamo5">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="./pricing"
+              >
+                Pricing
+              </a>
+            </p>
+          </div>
+          <div className="framer-ygwi0c">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="https://twitter.com/joindarkdesign"
+                target="_blank"
+                rel="noopener"
+              >
+                Twitter/X
+              </a>
+            </p>
+          </div>
+        </div>
+        <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-start overflow-visible p-[0] relative w-full">
+          <div className="framer-1per1gf">
+            <p className="framer-text">Support</p>
+          </div>
+          <div className="framer-1w5ypru">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="./pricing#faq"
+              >
+                FAQ
+              </a>
+            </p>
+          </div>
+          <div className="framer-1wxr1ca">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="https://tally.so/r/wAv41e"
+                target="_blank"
+                rel="noopener"
+              >
+                Feedback
+              </a>
+            </p>
+          </div>
+          <div className="framer-zcd3z0">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="mailto:hey@dark.design"
+                target="_blank"
+                rel="noopener"
+              >
+                Contact
+              </a>
+            </p>
+          </div>
+        </div>
+        <div className="content-start items-start flex flex-col flex-nowrap gap-4 h-min justify-start overflow-visible p-[0] relative w-full">
+          <div className="framer-1l89xjm">
+            <p className="framer-text">Legal</p>
+          </div>
+          <div className="framer-mnxab0">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="./legal/privacy"
+              >
+                Privacy
+              </a>
+            </p>
+          </div>
+          <div className="framer-1bynl9t">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="./legal/terms"
+              >
+                Terms
+              </a>
+            </p>
+          </div>
+          <div className="framer-1in5bcd">
+            <p className="framer-text">
+              <a
+                className="framer-text framer-styles-preset-10g127g"
+                href="./legal/imprint"
+              >
+                Imprint
+              </a>
+            </p>
+          </div>
+        </div>
+      </div> */
+}
+
+// File: src/components/index.ts
+export * from "./Navbar";
+export * from "./branding/Logo1";
+export * from "./VersionSwitch";
+export * from "./SiteContainer";
+export * from "./Site";
+export * from "./FilterBar";
+export * from "./customui/Filter";
+export * from "./customui/Popular";
+export * from "./SearchBar";
+export * from "./Socials";
+export * from "./ThemeProvider";
+export * from "./SearchModal";
+export * from "./Footer";
+export * from "./BurgerBar";
+export * from "./AniBG";
+export * from "./Test";
+
+// File: src/components/Navbar.tsx
+import {
+  Logo1,
+  VersionSwitch,
+  SearchBar,
+  Socials,
+  BurgerBar,
+} from "@/components";
+export const Navbar = () => {
+  return (
+    <nav className="sticky top-4 z-20 inset-0 h-[60px] bg-black/10 dark:bg-black/ main-border backdrop-blur-[5px] w-[95%] mx-auto rounded-[15px] flex max-w-[90rem] min-w-1 items-center justify-between p-5 px-2 lg:px-8">
+      <div className="flex">
+        <a href="./" className="px-2 items-center flex">
+          <Logo1 />
+        </a>
+        <VersionSwitch />
+      </div>
+      <div className="gap-4 max-sm:hidden flex">
+        <SearchBar />
+        <Socials />
+      </div>
+      <div className="sm:hidden">
+        <BurgerBar />
+      </div>
+    </nav>
+  );
+};
+
+// File: src/components/pageTitle.tsx
+import Head from "next/head";
+import sitesData from "../app/content/siteData.json";
+const site = sitesData;
+
+interface PageTitleProps {
+  siteName?: string;
+}
+
+const PageTitle = ({ siteName }: PageTitleProps) => {
+  return (
+    <Head>
+      <title>{`Superlist - ${siteName || "Site Not Found"}`}</title>
+    </Head>
+  );
+};
+
+export default PageTitle;
+
+// File: src/components/SearchBar.tsx
+"use client";
+import React from "react";
+import { SearchModal } from "./SearchModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@headlessui/react";
+
+export const SearchBar = () => {
+  return (
+    <Dialog>
+      <DialogTrigger className="bg-background/50 main-border inline-flex items-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground px-4 py-2 relative h-8 w-full justify-start rounded-[0.5rem] text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-64">
+        <span className="hidden lg:inline-flex">Search...</span>
+        <span className="inline-flex lg:hidden">Search...</span>
+        <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+          <span className="text-xs">⌘</span>K
+        </kbd>
+      </DialogTrigger>
+      <DialogContent className="flex items-center bg-background/50 backdrop-blur-md p-2 !rounded-[1rem] search-con">
+        <input
+          id="searchInput"
+          className="bg-transparent block w-full h-12 px-3 py-1 transition-colors leading-tight placeholder:text-neutral-500 outline-2 outline-none text-xl"
+          type="search"
+          placeholder="Search..."
+        />
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// File: src/components/SearchModal.tsx
+export const SearchModal = ({
+  children,
+}: {
+  children: React.ReactNode;
+  open: boolean;
+}) => {
+  return (
+    <div className="bg-black/50 fixed inset-0 z-10 flex justify-center items-center">
+      <div className="p-4 bg-background/70 main-border rounded-xl shadow-lg w-[90%] max-w-[500px] h-[90%] max-h-[500px] overflow-hidden">
+        <textarea className="bg-pink-600/50 w-full rounded-lg"></textarea>
+      </div>
+    </div>
+  );
+};
+
+// File: src/components/Site.tsx
+import Image from "next/image";
+import { Suspense } from "react";
+import { Skeleton } from "./ui/skeleton";
+import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+
+interface SiteProps {
+  name: string;
+  categories: string[];
+  imageSrc: string;
+  link: string;
+}
+
+export const Site = ({ name, categories, imageSrc, link }: SiteProps) => {
+  return (
+    <>
+      <div className="site-h rounded-[26px] size-fit p-4 gap-2 grid transition-all duration-250">
+        {/* <a href={link}> */}
+
+        <a
+          href={`/sites/${encodeURIComponent(
+            name.toLowerCase().replace(/\s+/g, "-")
+          )}`}
+        >
+          <Suspense
+            fallback={<Skeleton className="site rounded-[10px] h-[18.83rem]" />}
+          >
+            <div className="rounded-[10px] overflow-hidden flex items-center align-middle justify-center size-fit border-2 dark:border-white/10">
+              <Image
+                loading="lazy"
+                className="site"
+                src={imageSrc}
+                height={300}
+                width={500}
+                alt={`Photo of the site ${name}`}
+              />
+            </div>
+          </Suspense>
+        </a>
+        <Suspense fallback={<Skeleton className="h-6" />}>
+          <div className="flex justify-between content-center items-center flex-none h-min overflow-visible p-0 relative w-full">
+            <div className="flex gap-1 cursor-pointer hover:opacity-70 transition-opacity duration-250">
+              <a className="font-bold">{name}</a>
+              <a>·</a>
+              <a>{categories.length > 0 ? categories[0] : "No Category"}</a>
+            </div>
+            <div className="flex gap-1 cursor-pointer hover:opacity-70 transition-opacity duration-250">
+              <Link href={link}>
+                <ArrowUpRightIcon className="w-4 stroke-foreground/50 stroke-2 mr-1" />
+              </Link>
+            </div>
+          </div>
+        </Suspense>
+      </div>
+    </>
+  );
+};
+
+// File: src/components/SiteContainer.tsx
+export const SiteContainer = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      <div className="site-grid">{children}</div>
+    </>
+  );
+};
+
+// File: src/components/Socials.tsx
+import Image from "next/image";
+import twitterIcon from "../../public/logos/x.svg";
+import discordIcon from "../../public/logos/discord.svg";
+import githubIcon from "../../public/logos/github.svg";
+
+export const SocialIcons = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      <div className="site-grid">{children}</div>
+    </>
+  );
+};
+
+export const Socials = () => {
+  return (
+    <>
+      <div className="hidden md:flex gap-3 items-center">
+        <a target="_blank" href="https://discord.gg/ga2ENQvczq">
+          <Image
+            className="fill-social hover:opacity-70 transition-opacity duration-300"
+            src={discordIcon}
+            width={24}
+            height={24}
+            alt="Superlist's Discord Server"
+          />
+        </a>
+        {/* <a target="_blank" href="https://twitter.com/nitves">
+          <Image
+            className="fill-social"
+            src={twitterIcon}
+            width={24}
+            height={24}
+            alt="X formally known as Twitter's Logo"
+          />
+        </a> */}
+        <a target="_blank" href="https://github.com/nitives/Superlist">
+          <Image
+            className="fill-social hover:opacity-70 transition-opacity duration-300"
+            src={githubIcon}
+            width={24}
+            height={24}
+            alt="Superlist's GitHub Repository"
+          />
+        </a>
+      </div>
+    </>
+  );
+};
+
+// File: src/components/Test.tsx
+export const Test = () => {
+  return <p className="text-red-500">TEST</p>;
+};
+
+// File: src/components/ThemeProvider.tsx
+"use client"
+
+import * as React from "react"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { type ThemeProviderProps } from "next-themes/dist/types"
+
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+
+// File: src/components/ui/dialog.tsx
+"use client"
+
+import * as React from "react"
+import * as DialogPrimitive from "@radix-ui/react-dialog"
+import { X } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+
+const Dialog = DialogPrimitive.Root
+
+const DialogTrigger = DialogPrimitive.Trigger
+
+const DialogPortal = DialogPrimitive.Portal
+
+const DialogClose = DialogPrimitive.Close
+
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Overlay
+    ref={ref}
+    className={cn(
+      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    )}
+    {...props}
+  />
+))
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+
+const DialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <DialogPortal>
+    <DialogOverlay />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <X className="h-4 w-4" />
+        <span className="sr-only">Close</span>
+      </DialogPrimitive.Close>
+    </DialogPrimitive.Content>
+  </DialogPortal>
+))
+DialogContent.displayName = DialogPrimitive.Content.displayName
+
+const DialogHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "flex flex-col space-y-1.5 text-center sm:text-left",
+      className
+    )}
+    {...props}
+  />
+)
+DialogHeader.displayName = "DialogHeader"
+
+const DialogFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      className
+    )}
+    {...props}
+  />
+)
+DialogFooter.displayName = "DialogFooter"
+
+const DialogTitle = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Title
+    ref={ref}
+    className={cn(
+      "text-lg font-semibold leading-none tracking-tight",
+      className
+    )}
+    {...props}
+  />
+))
+DialogTitle.displayName = DialogPrimitive.Title.displayName
+
+const DialogDescription = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Description
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+))
+DialogDescription.displayName = DialogPrimitive.Description.displayName
+
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+}
+
+// File: src/components/ui/skeleton.tsx
+import { cn } from "@/lib/utils"
+
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn("animate-pulse rounded-md bg-muted", className)}
+      {...props}
+    />
+  )
+}
+
+export { Skeleton }
+
+// File: src/components/VersionSwitch.tsx
+"use client";
+import { Fragment, useState } from "react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
+
+export const VersionSwitch = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <Menu as="div" className="relative">
+        <MenuButton
+          className="main-border bg-black/5 text-xs leading-5 font-semibold rounded-full py-1 px-3 flex items-center space-x-2 dark:highlight-white/5"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          v4.0
+          <ChevronDownIcon className="size-4 relative left-[2px] fill-foreground" />
+        </MenuButton>
+        <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <MenuItems
+            anchor="bottom start"
+            className="z-30 mt-2 w-48 origin-top-left bg-background/50 rounded-xl main-border backdrop-blur-[5px] divide-y divide-gray-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          >
+            <div className="p-1">
+              {[
+                { version: "v4.0", link: "/" },
+                { version: "v3.4", link: "/archive/v3.4" },
+                { version: "OG", link: "/archive/OG" },
+              ].map(({ version, link }) => (
+                <MenuItem key={version}>
+                  <a
+                    href={link}
+                    className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-foreground/10 hover:bg-foreground/10 hover:text-foreground text-foreground"
+                  >
+                    {version}
+                  </a>
+                </MenuItem>
+              ))}
+            </div>
+          </MenuItems>
+        </Transition>
+      </Menu>
+    </div>
+  );
+};
+
+// File: src/lib/utils.ts
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+

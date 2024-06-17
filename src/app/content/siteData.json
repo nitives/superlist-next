@@ -2,103 +2,209 @@
   {
     "name": "Superlist",
     "categories": ["Goat", "Superlist"],
-    "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "description": "A comprehensive list of the greatest websites.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/Superlist.png",
+    "favicon": "/images/favicons/superlist.ico",
+    "link": "https://www.superlist.cc",
+    "socialLinks": {
+      "twitter": "https://twitter.com/superlist",
+      "github": "https://github.com/superlist"
+    }
   },
   {
     "name": "FileCR",
     "categories": ["Pirate"],
-    "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "description": "Great site for Adobe",
+    "important": "",
+    "imageSrc": "/images/cache/captures/FileCR.png",
+    "favicon": "/images/favicons/filecr.ico",
+    "link": "https://www.filecr.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/filecr",
+      "github": "https://github.com/filecr"
+    }
   },
   {
     "name": "4Download",
     "categories": ["Pirate"],
-    "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "description": "A platform for downloading various files.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/4Download.png",
+    "favicon": "/images/favicons/4download.ico",
+    "link": "https://4download.net/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/4download",
+      "github": "https://github.com/4download"
+    }
   },
   {
     "name": "SoftProber",
     "categories": ["Pirate"],
-    "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "description": "Software download and review site.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/SoftProber.png",
+    "favicon": "/images/favicons/softprober.ico",
+    "link": "https://softprober.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/softprober",
+      "github": "https://github.com/softprober"
+    }
   },
   {
     "name": "Movie-Web",
     "categories": ["Entertainment"],
-    "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "description": "One of the best sites for streaming movies, you can also sync you're watched media.",
+    "important": "This site has been deprecated aka the developers were forced to shut the site down but you can still use the Movie-Web through community links",
+    "imageSrc": "/images/cache/captures/Movie-Web.png",
+    "favicon": "/images/favicons/movie-web.ico",
+    "link": "https://scootydooter.vercel.app/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/movie-web",
+      "github": "https://github.com/movie-web"
+    }
   },
   {
     "name": "PressPlay",
     "categories": ["Entertainment"],
-    "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "description": "A platform for streaming videos and music.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/PressPlay.png",
+    "favicon": "/images/favicons/pressplay.ico",
+    "link": "https://pressplay.top",
+    "socialLinks": {
+      "twitter": "https://twitter.com/pressplay",
+      "github": "https://github.com/pressplay"
+    }
   },
   {
     "name": "GFXFather",
     "categories": ["Creative"],
+    "description": "Graphic design resources and tutorials.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/gfxfather.ico",
+    "link": "https://gfxfather.com/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/gfxfather",
+      "github": "https://github.com/gfxfather"
+    }
   },
   {
     "name": "Anicrush",
     "categories": ["Entertainment"],
+    "description": "Anime streaming and download site.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/anicrush.ico",
+    "link": "https://anicrush.to/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/anicrush",
+      "github": "https://github.com/anicrush"
+    }
   },
   {
     "name": "Animeflix",
     "categories": ["Entertainment"],
+    "description": "Watch and download anime series.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/animeflix.ico",
+    "link": "https://animeflix.gg/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/animeflix",
+      "github": "https://github.com/animeflix"
+    }
   },
   {
     "name": "MangoAI",
     "categories": ["AI"],
+    "description": "Find AI tools and apps.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/mangoai.ico",
+    "link": "https://mangoai.co/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/mangoai",
+      "github": "https://github.com/mangoai"
+    }
   },
   {
     "name": "MangaDex",
     "categories": ["Entertainment"],
+    "description": "Online manga reader and community.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/mangadex.ico",
+    "link": "https://www.mangadex.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/mangadex",
+      "github": "https://github.com/mangadex"
+    }
   },
   {
     "name": "Comick",
     "categories": ["Entertainment"],
+    "description": "Comic book reader and download site.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/comick.ico",
+    "link": "https://www.comick.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/comick",
+      "github": "https://github.com/comick"
+    }
   },
   {
     "name": "NTSCQ",
     "categories": ["Creative"],
+    "description": "Creative design and digital art resources.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/ntscq.ico",
+    "link": "https://www.ntscq.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/ntscq",
+      "github": "https://github.com/ntscq"
+    }
   },
   {
     "name": "noclip.website",
     "categories": ["Dev"],
+    "description": "3D visualization and game development resources.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/noclip.ico",
+    "link": "https://www.noclip.website",
+    "socialLinks": {
+      "twitter": "https://twitter.com/noclip",
+      "github": "https://github.com/noclip"
+    }
   },
   {
     "name": "Anna's Archive",
     "categories": ["Entertainment", "Books"],
+    "description": "Online book archive and library.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/annasarchive.ico",
+    "link": "https://annas-archive.org/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/annasarchive",
+      "github": "https://github.com/annasarchive"
+    }
   },
   {
     "name": "GenP",
     "categories": ["Design", "Creative", "VFX", "GFX"],
+    "description": "Adobe Creative Cloud - r/AdobeZii is for Mac.",
+    "important": "",
     "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "https://www.reddit.com/r/GenP/wiki/redditgenpguides/"
-  },
-  {
-    "name": "4Download",
-    "categories": ["Portfolio"],
-    "imageSrc": "/images/placeholder/placeholder2.png",
-    "link": "./"
+    "favicon": "/images/favicons/genp.ico",
+    "link": "https://www.reddit.com/r/GenP/wiki/redditgenpguides/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/genp",
+      "github": "https://github.com/genp"
+    }
   }
 ]

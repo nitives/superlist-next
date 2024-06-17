@@ -3,7 +3,7 @@ export const Logo1 = () => {
   return (
     <>
       <Image
-        className="super-invert"
+        className="super-invert hover:opacity-70 transition-opacity duration-300 "
         src="/images/favicon-white.png"
         width={24}
         height={24}

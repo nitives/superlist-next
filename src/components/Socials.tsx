@@ -17,7 +17,7 @@ export const Socials = () => {
       <div className="hidden md:flex gap-3 items-center">
         <a target="_blank" href="https://discord.gg/ga2ENQvczq">
           <Image
-            className="fill-social"
+            className="fill-social hover:opacity-70 transition-opacity duration-300"
             src={discordIcon}
             width={24}
             height={24}
@@ -35,7 +35,7 @@ export const Socials = () => {
         </a> */}
         <a target="_blank" href="https://github.com/nitives/Superlist">
           <Image
-            className="fill-social"
+            className="fill-social hover:opacity-70 transition-opacity duration-300"
             src={githubIcon}
             width={24}
             height={24}

@@ -1,8 +1,19 @@
-import { Site, SiteContainer, FilterBar } from "@/components";
-import sitesData from "./content/siteData.json"; // Adjust the path as needed
-import { Skeleton } from "@/components/ui/skeleton";
-import { Suspense } from "react";
-import { ChevronRightIcon } from "@heroicons/react/16/solid";
+"use client";
+import {
+  Site,
+  SiteContainer,
+  FilterBar,
+  AniBG,
+  Popular,
+  Filter,
+} from "@/components";
+import { Pill } from "@/components/customui";
+import sitesData from "./content/siteData.json";
+import React, { Suspense } from "react";
+import { useEffect, useState } from "react";
+import getConfig from "./content/localization/manager";
+import { Config } from "./content/localization/types/config";
+import { Button } from "@/components/customui/Button";
 
 interface SiteData {
   name: string;
@@ -12,49 +23,92 @@ interface SiteData {
 }
 
 export default function Home() {
+  const [language, setLanguage] = useState<string>("en");
+  const [config, setConfig] = useState<Config | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setLanguage(navigator.language);
+    }
+  }, []);
+
+  useEffect(() => {
+    setConfig(getConfig(language));
+  }, [language]);
+
+  if (!config) {
+    return (
+      <main className="p-2">
+        <div className="w-full mx-auto my-0 ">
+          <div className="mt-10 my-5 items-center flex-col flex ">
+            <Pill href="./" className="">
+              <p>Superlist 3.7</p>
+            </Pill>
+            <div className="uppercase text-center z-10 grayscale">
+              <a className="hero-text text-foreground font-bold text-center align-middle tracking-tighter inline-block mt-5">
+                WEBSITES CURATED FROM THE
+                <span className="text-[1em] opacity-50"> DARK SIDE</span> OF THE
+                WEB
+              </a>
+            </div>
+            <AniBG />
+          </div>
+        </div>
+
+        <div className="w-full mx-auto px-5 py-5 justify-between flex">
+          <Button variant={"subtle"}>Popular</Button>
+          <Button variant={"subtle"}>Filter</Button>
+        </div>
+        {/* <p>DEV - Current language is: {language}</p> */}
+        <SiteContainer>
+          <Suspense fallback={<div>Loading...</div>}>
+            {sitesData.map((site: SiteData, index: number) => (
+              <Site
+                key={index}
+                name={site.name}
+                categories={site.categories}
+                imageSrc={site.imageSrc}
+                link={site.link}
+              />
+            ))}
+          </Suspense>
+        </SiteContainer>
+      </main>
+    );
+  }
+
   return (
     <main className="p-2">
       <div className="w-full mx-auto my-0 ">
-        <div className="mt-5 my-5 items-center flex-col flex ">
-          <div className="*:transition-colors *:duration-500 *:fill-foreground/50 hover:*:fill-foreground/90">
-            <a
-              className="bg-neutral-800/10 dark:bg-white/10 hover:dark:bg-white/15 hover:bg-neutral-800/50 text-foreground/50 hover:text-background dark:text-foreground/50 flex items-center h-7 main-border rounded-full p-3 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:ring-offset-2"
-              rel="noopener"
-              href="./og"
-            >
-              <p className="select-none">Superlist 3.7</p>
-              <ChevronRightIcon className=" size-4 relative left-[2px]" />
+        <div className="mt-10 my-5 items-center flex-col flex ">
+          <Pill href="./" className="">
+            <p>Superlist 3.7</p>
+          </Pill>
+          <div className="uppercase text-center z-10">
+            <a className="hero-text text-foreground font-bold text-center align-middle tracking-tighter inline-block mt-5">
+              {config.heroTitle[1]}{" "}
+              <span className="text-[1em] opacity-50">
+                {config.heroTitle[2]}
+              </span>{" "}
+              {config.heroTitle[3]}
             </a>
           </div>
-
-          <div className="uppercase text-center">
-            {/* <Suspense fallback={<Skeleton />}>
-              <h1 className="text-[6em] font-bold text-center">Superlist.cc</h1>
-            </Suspense> */}
-
-            <a className="text-foreground md:text-[4em] text-[2.3em] md:leading-[3.3rem] leading-[1.9rem] md:max-w-[600px] max-w-[300px] font-bold text-center  align-middle  tracking-tighter inline-block mt-5">
-              Websites curated from the{" "}
-              <span className="text-[1em] opacity-50">dark side</span> of the
-              web
-            </a>
-          </div>
+          <AniBG />
         </div>
       </div>
 
       <FilterBar />
-
+      {/* <p>DEV - Current language is: {language}</p> */}
       <SiteContainer>
-        <Suspense fallback={<Skeleton />}>
-          {sitesData.map((site: SiteData, index: number) => (
-            <Site
-              key={index}
-              name={site.name}
-              categories={site.categories}
-              imageSrc={site.imageSrc}
-              link={site.link}
-            />
-          ))}
-        </Suspense>
+        {sitesData.map((site: SiteData, index: number) => (
+          <Site
+            key={index}
+            name={site.name}
+            categories={site.categories}
+            imageSrc={site.imageSrc}
+            link={site.link}
+          />
+        ))}
       </SiteContainer>
     </main>
   );

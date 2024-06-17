@@ -24,7 +24,6 @@ export const VersionSwitch = () => {
         </MenuButton>
         <Transition
           as={Fragment}
-          show={isOpen}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
@@ -33,15 +32,22 @@ export const VersionSwitch = () => {
           leaveTo="transform opacity-0 scale-95"
         >
           <MenuItems
-            static
-            className="absolute z-10 mt-2 w-48 origin-top-left bg-background/50 rounded-xl main-border backdrop-blur-[5px] divide-y divide-gray-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            anchor="bottom start"
+            className="z-30 mt-2 w-48 origin-top-left bg-background/50 rounded-xl main-border backdrop-blur-[5px] divide-y divide-gray-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <div className="p-1">
-              {["v4.0", "v3.4", "OG"].map((version) => (
+              {[
+                { version: "v4.0", link: "/" },
+                { version: "v3.4", link: "/archive/v3.4" },
+                { version: "OG", link: "/archive/OG" },
+              ].map(({ version, link }) => (
                 <MenuItem key={version}>
-                  <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-foreground/10 hover:bg-white/10 hover:text-white text-white ">
+                  <a
+                    href={link}
+                    className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-foreground/10 hover:bg-foreground/10 hover:text-foreground text-foreground"
+                  >
                     {version}
-                  </button>
+                  </a>
                 </MenuItem>
               ))}
             </div>

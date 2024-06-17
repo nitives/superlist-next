@@ -14,3 +14,4 @@ export * from "./Footer";
 export * from "./BurgerBar";
 export * from "./AniBG";
 export * from "./Test";
+export * from "./CommitInfo";

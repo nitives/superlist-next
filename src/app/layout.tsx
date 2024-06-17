@@ -53,7 +53,7 @@ export default function RootLayout({
           property="og:description"
           content="The Ultimate List of the Internet, find any link for any task you might need."
         />
-        <meta property="og:image" content="/images/meta/meta-image.png" />\
+        <meta property="og:image" content="/images/meta/meta-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="twitter:card" content="summary_large_image" />

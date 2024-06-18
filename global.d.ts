@@ -5,5 +5,3 @@ declare module "colorthief" {
     getPalette: (img: HTMLImageElement | null) => Color[];
   }
 }
-
-declare module "read-more-react";

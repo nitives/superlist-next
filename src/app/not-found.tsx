@@ -14,7 +14,7 @@ export default function NotFound() {
           </p>
         </div>
         <div className="font-mono">
-          <p>This page doesn&apos;t exist yet</p>
+          <p>This page doesn&apos;t exist</p>
           <Link
             href="/"
             className="text-muted-foreground hover:text-primary transition-all duration-300 ease-in-out"

@@ -82,7 +82,7 @@
     "categories": ["Creative"],
     "description": "Graphic design resources and tutorials.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/GFXFather.png",
     "favicon": "/images/favicons/gfxfather.ico",
     "link": "https://gfxfather.com/",
     "socialLinks": {
@@ -95,7 +95,7 @@
     "categories": ["Entertainment"],
     "description": "Anime streaming and download site.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/Anicrush.png",
     "favicon": "/images/favicons/anicrush.ico",
     "link": "https://anicrush.to/",
     "socialLinks": {
@@ -108,7 +108,7 @@
     "categories": ["Entertainment"],
     "description": "Watch and download anime series.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/Animeflix.png",
     "favicon": "/images/favicons/animeflix.ico",
     "link": "https://animeflix.gg/",
     "socialLinks": {
@@ -121,7 +121,7 @@
     "categories": ["AI"],
     "description": "Find AI tools and apps.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/MangoAI.png",
     "favicon": "/images/favicons/mangoai.ico",
     "link": "https://mangoai.co/",
     "socialLinks": {
@@ -134,7 +134,7 @@
     "categories": ["Entertainment"],
     "description": "Online manga reader and community.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/MangaDex.png",
     "favicon": "/images/favicons/mangadex.ico",
     "link": "https://www.mangadex.com",
     "socialLinks": {
@@ -147,7 +147,7 @@
     "categories": ["Entertainment"],
     "description": "Comic book reader and download site.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/Comick.png",
     "favicon": "/images/favicons/comick.ico",
     "link": "https://www.comick.com",
     "socialLinks": {
@@ -160,7 +160,7 @@
     "categories": ["Creative"],
     "description": "Creative design and digital art resources.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/NTSCQ.gif",
     "favicon": "/images/favicons/ntscq.ico",
     "link": "https://www.ntscq.com",
     "socialLinks": {
@@ -173,7 +173,7 @@
     "categories": ["Dev"],
     "description": "3D visualization and game development resources.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/noclip.website.png",
     "favicon": "/images/favicons/noclip.ico",
     "link": "https://www.noclip.website",
     "socialLinks": {
@@ -186,7 +186,7 @@
     "categories": ["Entertainment", "Books"],
     "description": "Online book archive and library.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/AnnasArchive.png",
     "favicon": "/images/favicons/annasarchive.ico",
     "link": "https://annas-archive.org/",
     "socialLinks": {
@@ -199,7 +199,7 @@
     "categories": ["Design", "Creative", "VFX", "GFX"],
     "description": "Adobe Creative Cloud - r/AdobeZii is for Mac.",
     "important": "",
-    "imageSrc": "/images/placeholder/placeholder2.png",
+    "imageSrc": "/images/cache/captures/GenP.png",
     "favicon": "/images/favicons/genp.ico",
     "link": "https://www.reddit.com/r/GenP/wiki/redditgenpguides/",
     "socialLinks": {

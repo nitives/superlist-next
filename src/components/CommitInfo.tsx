@@ -6,8 +6,10 @@ export const CommitInfo = ({ className }: { className: string }) => {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400"></span>
           <span className="relative inline-flex rounded-full size-2 bg-green-500"></span>
         </span>
-        <p className="-mr-1">Latest Commit -</p>
-        <p>{process.env.NEXT_PUBLIC_COMMIT_HASH}</p>
+        <div className="inline-flex gap-1">
+          <p className="-mr- text-muted-foreground">Latest Commit -</p>
+          <p>{process.env.NEXT_PUBLIC_COMMIT_HASH}</p>
+        </div>
       </div>
     </div>
   );

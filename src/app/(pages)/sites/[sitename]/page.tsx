@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { usePathname } from "next/navigation";
 import sitesData from "../../../content/siteData.json";
 import Image from "next/image";
@@ -19,9 +20,9 @@ export default function SiteDetails() {
   );
 
   return (
-    <main className="p-8 pt-24 pb-[10vw]">
+    <main className="md:p-8 p-4 md:pt-24 pt-7 pb-[10vw] flex justify-center">
       {site ? (
-        <div className="flex justify-center gap-9">
+        <div className="md:flex grid justify-center md:gap-9 gap-2">
           <div className="grid justify-end w-full">
             <Image
               priority
@@ -33,57 +34,60 @@ export default function SiteDetails() {
             />
           </div>
 
-          <div className="w-full grid justify-start">
-            <section>
-              <h1 className="font-bold text-[3vw]">{site.name}</h1>
-              <div className="w-fit flex gap-1 -mt-2 mb-1">
-                {site.categories.map((category, index) => (
-                  <p
-                    key={index}
-                    className="bg-foreground/5 p-1 border rounded-md flex text-xs"
-                  >
-                    {category}
-                  </p>
-                ))}
-              </div>
-              <div className="z-0 text-[0.8vw] max-w-96 opacity-60 pb-2">
-                <ReadMoreReact
-                  readMoreText={
-                    <a className="text-foreground/60 text-sm cursor-pointer z-20 relative">
-                      Read more
-                    </a>
-                  }
-                  text={site.description}
-                />
-              </div>
-
-              <div className="w-fit flex gap-1 py-2">
-                {site.important && (
-                  <p className="max-w-[24rem] opacity-50 bg-destructive/10 p-1 border border-destructive text-destructive-foreground rounded-md flex text-xs">
-                    {site.important}
-                  </p>
-                )}
-              </div>
-              <div className="gap-5 flex z-10 relative top-[-28px]">
-                <Button
-                  size="lg"
-                  href={site.link}
-                  className="mt-4 items-center z-[inherit]"
+          <div className="w-full justify-start">
+            <h1 className="font-bold md:text-[3rem] text-[2.5rem] md:pb-0 pb-2">
+              {site.name}
+            </h1>
+            <div className="w-fit flex gap-1 -mt-2 mb-[0.3rem]">
+              {site.categories.map((category, index) => (
+                <p
+                  key={index}
+                  className="bg-foreground/5 p-1 border rounded-md flex text-xs"
                 >
-                  Visit
-                </Button>
+                  {category}
+                </p>
+              ))}
+            </div>
+            <div className="z-0 md:text-[0.8rem] text-[1rem] max-w-96 opacity-60 pb-2">
+              <ReadMoreReact
+                min={80}
+                ideal={100}
+                max={200}
+                readMoreText={
+                  <a className="text-foreground/60 text-sm cursor-pointer z-20 relative">
+                    Read more
+                  </a>
+                }
+                text={site.description}
+              />
+            </div>
 
-                <Button
-                  disabled
-                  variant="disabled"
-                  size="lg"
-                  className="z-[inherit] mt-4 justify-center items-center gap-2 px-5 bg-foreground/5 hover:bg-foreground/5 active:bg-foreground/10 text-foreground"
-                >
-                  <BookmarkIcon className="stroke-foreground w-4 stroke-[2px]" />{" "}
-                  Save
-                </Button>
-              </div>
-            </section>
+            <div className="w-fit flex gap-1 py-2">
+              {site.important && (
+                <p className="max-w-[24rem] opacity-50 bg-destructive/10 p-1 border border-destructive text-destructive-foreground rounded-md flex text-xs">
+                  {site.important}
+                </p>
+              )}
+            </div>
+            <div className="gap-5 flex z-10 relative md:w-auto w-full justify-evenly">
+              <Button
+                size="lg"
+                href={site.link}
+                className="items-center z-[inherit] w-full"
+              >
+                Visit
+              </Button>
+
+              <Button
+                disabled
+                variant="disabled"
+                size="lg"
+                className="z-[inherit] w-full justify-center items-center gap-2 px-5 bg-foreground/5 hover:bg-foreground/5 active:bg-foreground/10 text-foreground"
+              >
+                <BookmarkIcon className="stroke-foreground w-4 stroke-[2px]" />{" "}
+                Save
+              </Button>
+            </div>
           </div>
         </div>
       ) : (

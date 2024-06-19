@@ -111,8 +111,8 @@ const MovieDetailsPage: React.FC = () => {
       <div className="flex gap-2">
         <div className="grid max-w-96">
           <Image
-            width={250}
-            height={400}
+            width={400}
+            height={600}
             src={movie.image}
             alt={movie.title}
             className="mb-2 border rounded-2xl"
@@ -127,7 +127,7 @@ const MovieDetailsPage: React.FC = () => {
         <div className="px-2 w-full">
           <iframe
             // src={movie.url}
-            src="https://www.youtube.com/embed/hPt1gUE1zAc"
+            src="https://www.youtube.com/embed/Z1BCujX3pw8"
             width="100%"
             className="aspect-video rounded-2xl"
           ></iframe>
@@ -143,8 +143,8 @@ const MovieDetailsPage: React.FC = () => {
           {movie.recommendations.map((recommendation) => (
             <div key={recommendation.id} className="">
               <Image
-                width={200}
-                height={300}
+                width={400}
+                height={600}
                 src={recommendation.image}
                 alt={recommendation.title}
                 className="mb-2 border rounded-xl !h-[500px] movie-card-image"

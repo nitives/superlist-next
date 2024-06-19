@@ -64,8 +64,8 @@ export default function Movies() {
                 <div key={movie.id} className="movie-card">
                   <Link href={`/movies/${movie.id}`}>
                     <Image
-                      width={250}
-                      height={400}
+                      width={200}
+                      height={300}
                       src={movie.image}
                       alt={movie.title}
                       className="movie-card-image"

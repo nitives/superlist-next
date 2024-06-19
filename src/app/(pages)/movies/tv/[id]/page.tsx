@@ -121,15 +121,15 @@ export default function TVShows() {
       <div>
         <div className="mt-36">
           <h2 className="text-2xl font-semibold mb-4">
-            Recommended Shows/Movies
+            Recommended Shows & Movies
           </h2>
         </div>
         <div className="recommendation-grid">
           {movie.recommendations.map((recommendation) => (
             <div key={recommendation.id} className="">
               <Image
-                width={250}
-                height={400}
+                width={200}
+                height={300}
                 src={recommendation.image}
                 alt={recommendation.title}
                 className="mb-2 border rounded-xl !h-[500px] movie-card-image"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, Suspense } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -26,17 +26,19 @@ export const SearchBar = () => {
       </DialogTrigger>
       <DialogContent className="flex items-center bg-background/50 backdrop-blur-md p-2 !rounded-[1rem] search-con pl-5 gap-1">
         <FaSearch className="fill-neutral-200" />
-        <input
-          id="searchInput"
-          className="bg-transparent block w-full h-12 px-3 py-1 transition-colors leading-tight placeholder:text-neutral-500 outline-2 outline-none text-xl"
-          type="search"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSearch();
-          }}
-        />
+        <Suspense>
+          <input
+            id="searchInput"
+            className="bg-transparent block w-full h-12 px-3 py-1 transition-colors leading-tight placeholder:text-neutral-500 outline-2 outline-none text-xl"
+            type="search"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
+          />
+        </Suspense>
       </DialogContent>
     </Dialog>
   );

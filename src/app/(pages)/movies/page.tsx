@@ -16,18 +16,9 @@ interface Movie {
   type: string;
 }
 
-export default function Movies() {
+const MoviesList: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { searchQuery, setSearchQuery } = useContext(SearchContext);
-  const searchParams = useSearchParams();
-  const queryFromURL = searchParams.get("search");
-
-  useEffect(() => {
-    if (queryFromURL && queryFromURL !== searchQuery) {
-      setSearchQuery(queryFromURL);
-    }
-  }, [queryFromURL, searchQuery, setSearchQuery]);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -51,35 +42,53 @@ export default function Movies() {
   }, [searchQuery]);
 
   return (
+    <div className="movie-grid">
+      {loading
+        ? Array.from({ length: 24 }).map((_, index) => (
+            <div key={index} className="movie-card">
+              <Skeleton className="w-auto h-[300px]" />
+            </div>
+          ))
+        : movies.map((movie) => (
+            <div key={movie.id} className="movie-card">
+              <Link href={`/movies/${movie.id}`}>
+                <Image
+                  width={200}
+                  height={300}
+                  src={movie.image}
+                  alt={movie.title}
+                  className="movie-card-image"
+                />
+                <div className="movie-card-info">
+                  <h2 className="movie-card-title">{movie.title}</h2>
+                  <p className="movie-card-release">{movie.releaseDate}</p>
+                  {/* <p className="movie-card-release">{movie.id}</p> */}
+                </div>
+              </Link>
+            </div>
+          ))}
+    </div>
+  );
+};
+
+const Movies: React.FC = () => {
+  const { searchQuery, setSearchQuery } = useContext(SearchContext);
+  const searchParams = useSearchParams();
+  const queryFromURL = searchParams.get("search");
+
+  useEffect(() => {
+    if (queryFromURL && queryFromURL !== searchQuery) {
+      setSearchQuery(queryFromURL);
+    }
+  }, [queryFromURL, searchQuery, setSearchQuery]);
+
+  return (
     <main className="p-2 pt-10">
-      <div className="movie-grid">
-        <Suspense fallback={<div>Loading...</div>}>
-          {loading
-            ? Array.from({ length: 24 }).map((_, index) => (
-                <div key={index} className="movie-card">
-                  <Skeleton className="w-auto h-[300px]" />
-                </div>
-              ))
-            : movies.map((movie) => (
-                <div key={movie.id} className="movie-card">
-                  <Link href={`/movies/${movie.id}`}>
-                    <Image
-                      width={200}
-                      height={300}
-                      src={movie.image}
-                      alt={movie.title}
-                      className="movie-card-image"
-                    />
-                    <div className="movie-card-info">
-                      <h2 className="movie-card-title">{movie.title}</h2>
-                      <p className="movie-card-release">{movie.releaseDate}</p>
-                      {/* <p className="movie-card-release">{movie.id}</p> */}
-                    </div>
-                  </Link>
-                </div>
-              ))}
-        </Suspense>
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <MoviesList searchQuery={searchQuery || ""} />
+      </Suspense>
     </main>
   );
-}
+};
+
+export default Movies;

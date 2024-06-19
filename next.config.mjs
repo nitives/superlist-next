@@ -6,7 +6,9 @@ function getCommitHash() {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  missingSuspenseWithCSRBailout: false,
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
   env: {
     NEXT_PUBLIC_COMMIT_HASH: getCommitHash(),
   },

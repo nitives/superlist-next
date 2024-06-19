@@ -20,7 +20,7 @@ export const Navbar = () => {
         <Link href={"/downloads"}>Downloads</Link>
         <Link href={"/movies"}>Movies</Link>
       </div>
-      <div className="gap-4 max-sm:hidden flex">
+      <div className="gap-4 max-sm:hidden w-[40%] flex">
         <SearchBar />
         <Socials />
       </div>

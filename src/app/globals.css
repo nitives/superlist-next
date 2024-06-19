@@ -283,6 +283,14 @@ body {
   display: none;
 }
 
+#radix-\:R2oqcq\:,
+#radix-\:r2\:,
+#radix-\:r28\:,
+#radix-\:Rmqcq\: {
+  width: calc(100vw - 15%) !important;
+  max-width: 500px;
+}
+
 #searchInput {
   border-radius: calc(1rem - 8px);
   &::placeholder {

@@ -2,6 +2,7 @@
 import { Cross as Hamburger } from "hamburger-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { SearchBar } from "./SearchBar";
 
 export const BurgerBar = () => {
   const [isOpen, setOpen] = useState(false);
@@ -27,8 +28,11 @@ export const BurgerBar = () => {
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-center scale-[0.6]">
-        <Hamburger size={24} toggled={isOpen} toggle={toggleMenu} />
+      <div className="flex items-center justify-center">
+        <SearchBar />
+        <div className="scale-[0.6]">
+          <Hamburger size={24} toggled={isOpen} toggle={toggleMenu} />
+        </div>
       </div>
       <div
         className={`menu bg-background ${
@@ -40,8 +44,9 @@ export const BurgerBar = () => {
             isOpen ? "!opacity-100" : "!opacity-0"
           }`}
         >
-          <Link href="/downloads">Downloads</Link>
           <Link href="/bookmarks">Bookmarks</Link>
+          <Link href="/downloads">Downloads</Link>
+          <Link href="/movies">Movies</Link>
         </ul>
       </div>
     </div>

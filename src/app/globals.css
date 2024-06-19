@@ -38,6 +38,8 @@
     --radius: 0.5rem;
     --border-x: hsla(0, 0%, 0%, 0.05);
     --theme-x: hsl(264, 76%, 50%);
+
+    --ease-x: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -89,6 +91,7 @@
 }
 
 * {
+  font-weight: 450;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -119,6 +122,14 @@ body {
 .nav-m {
   margin-inline: auto;
   width: 10vw;
+}
+
+.nav-links a {
+  font-weight: 510;
+  transition: color 0.24s var(--ease-x);
+  &:hover {
+    color: hsl(var(--primary));
+  }
 }
 
 .hamburger-react div {
@@ -180,11 +191,30 @@ body {
 }
 
 .hero-text {
+  font-weight: 700;
   text-align: center;
   letter-spacing: -0.05em;
   line-height: 3.5vw;
   font-size: 4.2vw;
   width: 35vw;
+}
+
+@keyframes BlurAndMove {
+  0% {
+    filter: blur(10px);
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  100% {
+    filter: blur(0px);
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.hero-text {
+  /* animation: BlurAndMove 1s ease 0.4s both; */
+  opacity: 1; /* Make 0 */
 }
 
 @media (max-width: 800px) {
@@ -255,6 +285,27 @@ body {
 
 #searchInput {
   border-radius: calc(1rem - 8px);
+  &::placeholder {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  #searchInput {
+    color: var(--background-x);
+    &::placeholder {
+      color: var(--background-x);
+    }
+  }
+  .search-con svg {
+    fill: var(--background-x);
+    stroke: var(--background-x);
+  }
+}
+
+.search-con button {
+  position: absolute;
+  top: auto;
 }
 
 input[type="search"]::-ms-clear {
@@ -272,11 +323,6 @@ input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   display: none;
-}
-
-.search-con button {
-  position: absolute;
-  top: auto;
 }
 
 .fill-social {
@@ -323,7 +369,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .page-site {
-  width: auto;
+  width: 40rem;
   height: auto;
 }
 
@@ -385,4 +431,138 @@ div {
     color: white;
     background-color: hsla(0, 0%, 4%, 0.9);
   }
+}
+
+/* Movie */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px; /* Adjust this value to control the space between items */
+}
+
+@media (min-width: 640px) {
+  .movie-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px; /* Adjust this value to control the space between items */
+  }
+}
+
+@media (min-width: 1040px) {
+  .movie-grid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px; /* Adjust this value to control the space between items */
+  }
+}
+
+.movie-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px; /* Adjust as needed */
+}
+
+.movie-card-image {
+  width: 100%;
+  height: 300px; /* Set a fixed height */
+  object-fit: cover; /* Ensure the image covers the container */
+  border-radius: 8px; /* Match the movie card border radius */
+}
+
+.movie-card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: white;
+  padding: 10px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-x);
+}
+
+.movie-card:hover .movie-card-info {
+  opacity: 1;
+}
+
+.movie-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  backdrop-filter: blur(2px);
+  mask: linear-gradient(to top, transparent, black 35%);
+  transition: mask 0.3s var(--ease-x);
+}
+
+.movie-card-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  text-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.movie-card-release {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin: 0;
+  text-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* TV Shows */
+
+.tvshow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.tvshow-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.tvshow-card:hover {
+  transform: scale(1.05);
+}
+
+.tvshow-card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.tvshow-card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tvshow-card:hover .tvshow-card-info {
+  opacity: 1;
+}
+
+.tvshow-card-title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.tvshow-card-release {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2rem;
 }

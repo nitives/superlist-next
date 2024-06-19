@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Footer, Navbar, ThemeProvider } from "@/components";
+import { Footer, Navbar, SearchProvider, ThemeProvider } from "@/components";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -74,9 +74,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          {children}
-          <Footer className="footer w-full mt-20 px-8 py-12 border-t" />
+          <SearchProvider>
+            <Navbar />
+            {children}
+            <Footer className="footer w-full mt-20 px-8 py-12 border-t" />
+          </SearchProvider>
         </ThemeProvider>
       </body>
     </html>

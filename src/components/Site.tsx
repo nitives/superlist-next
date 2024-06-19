@@ -47,7 +47,7 @@ export const Site = ({ name, categories, imageSrc, link }: SiteProps) => {
               <a>{categories.length > 0 ? categories[0] : "No Category"}</a>
             </div>
             <div className="flex gap-1 cursor-pointer hover:opacity-70 transition-opacity duration-250">
-              <Link href={link}>
+              <Link href={link} target="_blank">
                 <ArrowUpRightIcon className="w-4 stroke-foreground/50 stroke-2 mr-1" />
               </Link>
             </div>

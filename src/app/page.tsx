@@ -42,10 +42,10 @@ export default function Home() {
         <div className="w-full mx-auto my-0 ">
           <div className="mt-10 my-5 items-center flex-col flex ">
             <Pill href="./" className="">
-              <p>Superlist 3.7</p>
+              Superlist 3.7
             </Pill>
-            <div className="uppercase text-center z-10 grayscale">
-              <a className="hero-text text-foreground font-bold text-center align-middle tracking-tighter inline-block mt-5">
+            <div className="uppercase text-center z-10">
+              <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">
                 WEBSITES CURATED FROM THE
                 <span className="text-[1em] opacity-50"> DARK SIDE</span> OF THE
                 WEB
@@ -61,17 +61,15 @@ export default function Home() {
         </div>
         {/* <p>DEV - Current language is: {language}</p> */}
         <SiteContainer>
-          <Suspense fallback={<div>Loading...</div>}>
-            {sitesData.map((site: SiteData, index: number) => (
-              <Site
-                key={index}
-                name={site.name}
-                categories={site.categories}
-                imageSrc={site.imageSrc}
-                link={site.link}
-              />
-            ))}
-          </Suspense>
+          {sitesData.map((site: SiteData, index: number) => (
+            <Site
+              key={index}
+              name={site.name}
+              categories={site.categories}
+              imageSrc={site.imageSrc}
+              link={site.link}
+            />
+          ))}
         </SiteContainer>
       </main>
     );
@@ -85,7 +83,7 @@ export default function Home() {
             <p>Superlist 3.7</p>
           </Pill>
           <div className="uppercase text-center z-10">
-            <a className="hero-text text-foreground font-bold text-center align-middle tracking-tighter inline-block mt-5">
+            <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">
               {config.heroTitle[1]}{" "}
               <span className="text-[1em] opacity-50">
                 {config.heroTitle[2]}

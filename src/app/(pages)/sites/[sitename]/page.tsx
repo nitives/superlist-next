@@ -5,11 +5,11 @@ import sitesData from "../../../content/siteData.json";
 import Image from "next/image";
 import { Button } from "@/components/customui/Button";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
-import ReadMoreReact from "read-more-react";
+// import ReadMoreReact from "read-more-react";
 
 export default function SiteDetails() {
   const pathname = usePathname();
-  const lastSegment = pathname.split("/").pop();
+  const lastSegment = pathname.split("/").pop()?.replace(/-/g, " "); // Replace dashes with spaces
   const site = sitesData.find(
     (site) => site.name.toLowerCase() === lastSegment
   );
@@ -20,9 +20,9 @@ export default function SiteDetails() {
   );
 
   return (
-    <main className="md:p-8 p-4 md:pt-24 pt-7 pb-[10vw] flex justify-center">
+    <main className="md:p-8 p-4 md:pt-24 pt-7 pb-[10vw] flex justify-center min-h-[3rem]">
       {site ? (
-        <div className="md:flex grid justify-center md:gap-9 gap-2">
+        <div className="md:flex grid justify-center md:gap-9 gap-2 lg:max-w-6xl lg:min-w-[72rem] ">
           <div className="grid justify-end w-full">
             <Image
               priority
@@ -49,7 +49,8 @@ export default function SiteDetails() {
               ))}
             </div>
             <div className="z-0 md:text-[0.8rem] text-[1rem] max-w-96 opacity-60 pb-2">
-              <ReadMoreReact
+              <p>{site.description}</p>
+              {/* <ReadMoreReact
                 min={80}
                 ideal={100}
                 max={200}
@@ -59,7 +60,7 @@ export default function SiteDetails() {
                   </a>
                 }
                 text={site.description}
-              />
+              /> */}
             </div>
 
             <div className="w-fit flex gap-1 py-2">

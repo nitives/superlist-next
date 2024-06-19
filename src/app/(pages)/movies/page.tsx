@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, Suspense } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { SearchContext } from "@/components";
@@ -53,30 +53,32 @@ export default function Movies() {
   return (
     <main className="p-2 pt-10">
       <div className="movie-grid">
-        {loading
-          ? Array.from({ length: 24 }).map((_, index) => (
-              <div key={index} className="movie-card">
-                <Skeleton className="w-auto h-[300px]" />
-              </div>
-            ))
-          : movies.map((movie) => (
-              <div key={movie.id} className="movie-card">
-                <Link href={`/movies/${movie.id}`}>
-                  <Image
-                    width={200}
-                    height={300}
-                    src={movie.image}
-                    alt={movie.title}
-                    className="movie-card-image"
-                  />
-                  <div className="movie-card-info">
-                    <h2 className="movie-card-title">{movie.title}</h2>
-                    <p className="movie-card-release">{movie.releaseDate}</p>
-                    {/* <p className="movie-card-release">{movie.id}</p> */}
-                  </div>
-                </Link>
-              </div>
-            ))}
+        <Suspense fallback={<div>Loading...</div>}>
+          {loading
+            ? Array.from({ length: 24 }).map((_, index) => (
+                <div key={index} className="movie-card">
+                  <Skeleton className="w-auto h-[300px]" />
+                </div>
+              ))
+            : movies.map((movie) => (
+                <div key={movie.id} className="movie-card">
+                  <Link href={`/movies/${movie.id}`}>
+                    <Image
+                      width={200}
+                      height={300}
+                      src={movie.image}
+                      alt={movie.title}
+                      className="movie-card-image"
+                    />
+                    <div className="movie-card-info">
+                      <h2 className="movie-card-title">{movie.title}</h2>
+                      <p className="movie-card-release">{movie.releaseDate}</p>
+                      {/* <p className="movie-card-release">{movie.id}</p> */}
+                    </div>
+                  </Link>
+                </div>
+              ))}
+        </Suspense>
       </div>
     </main>
   );

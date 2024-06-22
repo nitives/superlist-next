@@ -11,7 +11,6 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_COMMIT_HASH: getCommitHash(),
-    BASE_URL: process.env,
   },
   images: {
     remotePatterns: [

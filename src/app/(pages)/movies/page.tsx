@@ -38,6 +38,7 @@ export default function Movies() {
     if (searchQuery) {
       fetchMovies(1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   const fetchMovies = async (page: number) => {

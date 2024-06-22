@@ -445,7 +445,7 @@ div {
 /* Movie */
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px; /* Adjust this value to control the space between items */
 }
 
@@ -460,6 +460,28 @@ div {
   .movie-grid {
     grid-template-columns: repeat(8, 1fr);
     gap: 10px; /* Adjust this value to control the space between items */
+  }
+}
+
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1040px) {
+  .recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
   }
 }
 
@@ -568,12 +590,6 @@ div {
 .tvshow-card-release {
   font-size: 0.875rem;
   margin-top: 0.25rem;
-}
-
-.recommendation-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 2rem;
 }
 
 .video-player {

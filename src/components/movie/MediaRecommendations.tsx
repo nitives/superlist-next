@@ -32,13 +32,16 @@ export default function MediaRecommendations() {
 
   if (!movie) {
     return (
-      <div className="flex w-full h-auto pt-[4rem] px-[10rem] gap-4 justify-center">
-        <div className="recommendation-grid">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <RecommendationCard key={index} />
-          ))}
+      <>
+        <p className="mt-10 text-3xl font-bold px-2">Recommended Movies</p>
+        <div className="flex w-full h-auto pt-[.5rem] lg:px-[10rem] px-1 gap-4 justify-center">
+          <div className="recommendation-grid">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <RecommendationCard key={index} />
+            ))}
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -46,30 +49,33 @@ export default function MediaRecommendations() {
   // console.log('IDs:', movie.results.map((recommendation: any) => recommendation.id));
 
   return (
-    <div className="flex w-full h-auto pt-[4rem] px-[10rem] gap-4 justify-center">
-      <div className="recommendation-grid">
-        {movie.results.map((recommendation: any) => (
-          <Link href={`./${recommendation.id}`} key={recommendation.id}>
-            <Image
-              draggable={false}
-              width={500}
-              height={750}
-              src={PosterSrc + recommendation.poster_path}
-              alt={recommendation.title}
-              className="mb-2 border rounded-xl movie-card-image select-none"
-            />
-            <h3 className="text-lg font-bold">{recommendation.title}</h3>
-            <div className="flex">
-              <p className="text-sm text-muted dark:text-muted-foreground flex gap-1">
-                {recommendation.media_type.charAt(0).toUpperCase() +
-                  recommendation.media_type.slice(1)}{" "}
-                · {""}
-                <DurationConvert duration={recommendation.duration} />
-              </p>
-            </div>
-          </Link>
-        ))}
+    <>
+      <p className="mt-10 text-3xl font-bold px-2">Recommended Movies</p>
+      <div className="flex w-full h-auto pt-[.5rem] lg:px-[10rem] px-1 gap-4 justify-center">
+        <div className="recommendation-grid">
+          {movie.results.map((recommendation: any) => (
+            <Link href={`./${recommendation.id}`} key={recommendation.id}>
+              <Image
+                draggable={false}
+                width={500}
+                height={750}
+                src={PosterSrc + recommendation.poster_path}
+                alt={recommendation.title}
+                className="mb-2 border rounded-xl movie-card-image select-none"
+              />
+              <h3 className="text-lg font-bold">{recommendation.title}</h3>
+              <div className="flex">
+                <p className="text-sm text-muted dark:text-muted-foreground flex gap-1">
+                  {recommendation.media_type.charAt(0).toUpperCase() +
+                    recommendation.media_type.slice(1)}{" "}
+                  · {""}
+                  <DurationConvert duration={recommendation.duration} />
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

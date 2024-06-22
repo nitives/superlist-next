@@ -25,7 +25,7 @@ export default function MediaDetails() {
     getMovieDetails();
   }, [id]);
 
-  console.log(id)
+  console.log(id);
   const { theme } = useTheme();
   const placeholderImage =
     theme === "dark" || "system"
@@ -35,7 +35,7 @@ export default function MediaDetails() {
   console.log(movie);
   if (!movie) {
     return (
-      <div className="flex w-full h-auto pt-[4rem] px-[10rem] gap-4 justify-center">
+      <div className="flex max-sm:flex-col pt-[4rem] max-sm:pt-[2rem] px-[10rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
         <div>
           <Skeleton
             id="movie.poster_path"
@@ -69,8 +69,8 @@ export default function MediaDetails() {
   }
 
   return (
-    <div className="flex w-full h-auto pt-[4rem] px-[10rem] gap-4 justify-center">
-      <div>
+    <div className="flex max-sm:flex-col pt-[4rem] max-sm:pt-[2rem] px-[10rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
+      <div className="max-sm:w-full flex items-center justify-center">
         <Image
           draggable={false}
           width={400}
@@ -82,10 +82,10 @@ export default function MediaDetails() {
               : "/public/images/bg-dark-texture1.png"
           }
           alt={movie.title}
-          className="mb-2 border rounded-2xl w-[35rem] max-w-[400px] select-none"
+          className="mb-2 border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw]  select-none"
         />
       </div>
-      <div className="max-w-[50rem] pt-[5rem]">
+      <div className="max-w-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">
         <p className="text-sm text-muted dark:text-muted-foreground">
           <TimeConvert>{movie.release_date}</TimeConvert> ·{" "}
           <DurationConvert duration={movie.runtime} />

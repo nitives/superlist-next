@@ -30,6 +30,7 @@
     "react-dom": "^18",
     "react-player": "^2.16.0",
     "read-more-react": "^1.0.10",
+    "sharp": "^0.33.4",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"
   },

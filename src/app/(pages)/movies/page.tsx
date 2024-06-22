@@ -17,7 +17,7 @@ interface Movie {
   type: string;
 }
 
-const TMDBkey = process.env.TMDB_API_KEY;
+const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
 export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);

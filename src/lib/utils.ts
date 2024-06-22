@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const TMDBkey = process.env.TMDB_API_KEY;
+const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
 export async function FetchSearchTMDB(id: string, type: string) {
   const { searchQuery, setSearchQuery } = useContext(SearchContext);

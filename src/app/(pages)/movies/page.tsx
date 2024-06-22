@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/customui/Button";
-import { subtle } from "crypto";
 
 interface Movie {
   id: string;
@@ -18,6 +17,8 @@ interface Movie {
   type: string;
 }
 
+const TMDBkey = process.env.TMDB_API_KEY;
+
 export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,7 +27,6 @@ export default function Movies() {
   const { searchQuery, setSearchQuery } = useContext(SearchContext);
   const searchParams = useSearchParams();
   const queryFromURL = searchParams.get("search");
-  const TMDBkey = "29a544eec5fd101484778be72595e609";
 
   useEffect(() => {
     if (queryFromURL && queryFromURL !== searchQuery) {
@@ -102,7 +102,13 @@ export default function Movies() {
       </div>
       {hasMore && (
         <div className="flex justify-center mt-10">
-          <Button variant={'subtle'} className="hover:!bg-foreground/10 active:!bg-foreground/25" onClick={handleLoadMore}>Load More</Button>
+          <Button
+            variant={"subtle"}
+            className="hover:!bg-foreground/10 active:!bg-foreground/25"
+            onClick={handleLoadMore}
+          >
+            Load More
+          </Button>
         </div>
       )}
     </main>

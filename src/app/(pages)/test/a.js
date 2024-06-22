@@ -1,8 +1,7 @@
 const type = "movie";
 const id = "634649";
 const keyword = "deadpool";
-const TMDBkey = process.env.TMDB_API_KEY;
-console.log(TMDBkey);
+const TMDBkey = "29a544eec5fd101484778be72595e609";
 
 // const tmdb = async () => {
 //   const response = await fetch(

@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
-import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorPage, TimeConvert } from "@/components";
-import DurationConvert from "@/components/DurationConvert";
+import { ErrorPage } from "@/components";
+import VideoPlayer from "@/components/movie/VideoPlayer";
+import MediaDetails from "@/components/movie/MediaDetails";
+import MediaRecommendations from "@/components/movie/MediaRecommendations";
 
 interface Recommendation {
   id: string;
@@ -86,65 +87,26 @@ export default function TVShows() {
         img="/images/emojis/apple/construction.png"
         returnLink="/"
       >
-        Movie not found.
+        TV Show not found.
       </ErrorPage>
     );
   }
 
   return (
-    <div className="p-4 px-20 pt-10">
-      <div className="flex gap-2">
-        <div className="grid max-w-96">
-          <Image
-            width={400}
-            height={600}
-            src={movie.image}
-            alt={movie.title}
-            className="mb-2 border rounded-2xl"
-          />
-          <h1 className="text-2xl font-bold">{movie.title}</h1>
-          <p className="text-sm text-muted dark:text-muted-foreground">
-            <TimeConvert>{movie.releaseDate}</TimeConvert>
-          </p>
-          <p className="opacity-90">{movie.description}</p>
-        </div>
-
-        <div className="px-2 w-full">
-          <iframe
-            // src={movie.url}
-            src="https://www.youtube.com/embed/hPt1gUE1zAc"
-            width="100%"
-            className="aspect-video rounded-2xl"
-          ></iframe>
+    <>
+      <div className="p-4 px-20 pt-10">
+        <div className="grid gap-2">
+          <div className="px-2 w-full flex items-center justify-center">
+            <VideoPlayer
+              height="100%"
+              width="100%"
+              className="aspect-video rounded-2xl h-[50rem] video-player"
+            />
+          </div>
+          <MediaDetails />
+          <MediaRecommendations />
         </div>
       </div>
-      <div>
-        <div className="mt-36">
-          <h2 className="text-2xl font-semibold mb-4">
-            Recommended Shows & Movies
-          </h2>
-        </div>
-        <div className="recommendation-grid">
-          {movie.recommendations.map((recommendation) => (
-            <div key={recommendation.id} className="">
-              <Image
-                width={200}
-                height={300}
-                src={recommendation.image}
-                alt={recommendation.title}
-                className="mb-2 border rounded-xl !h-[500px] movie-card-image"
-              />
-              <h3 className="text-lg font-bold">{recommendation.title}</h3>
-              <div className="flex">
-                <p className="text-sm text-muted dark:text-muted-foreground flex gap-1">
-                  <DurationConvert duration={recommendation.duration} />· {""}
-                  {recommendation.type}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

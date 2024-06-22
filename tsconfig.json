@@ -27,6 +27,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/(pages)/api/screenshot.js"
-  ],
+, "src/app/(pages)/test/a.js"  ],
   "exclude": ["node_modules"]
 }

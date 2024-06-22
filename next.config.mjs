@@ -11,12 +11,17 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_COMMIT_HASH: getCommitHash(),
+    BASE_URL: process.env,
   },
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "img.flixhq.to",
+      },
+      {
+        protocol: "https",
+        hostname: "image.tmdb.org",
       },
     ],
   },

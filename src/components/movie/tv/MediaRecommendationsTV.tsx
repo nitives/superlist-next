@@ -28,7 +28,7 @@ export default function MediaRecommendationsTV() {
   }, [id]);
   const RecommendationCard = () => (
     <div className="">
-      <Skeleton className="mb-1 border rounded-[8px] aspect-[2/3] w-[262.4px] object-cover" />
+      <Skeleton className="mb-1 border rounded-[8px] aspect-[2/3] w-[252px] object-cover" />
       <Skeleton className="h-10 rounded-[8px] mb-1" />
     </div>
   );
@@ -37,7 +37,7 @@ export default function MediaRecommendationsTV() {
     return (
       <>
         <p className="mt-10 text-3xl font-bold px-2">Recommended TV Shows</p>
-        <div className="flex w-full h-auto pt-[.5rem] lg:px-[5rem] px-1 gap-4 justify-center">
+        <div className="flex w-full h-auto pt-[.5rem] px-1 gap-4 justify-center">
           <div className="recommendation-grid">
             {Array.from({ length: 10 }).map((_, index) => (
               <RecommendationCard key={index} />

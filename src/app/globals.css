@@ -487,15 +487,31 @@ div {
 
 .episodes-grid {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   justify-items: center;
   width: fit-content;
+}
+
+@media (min-width: 640px) {
+  .episodes-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    justify-items: center;
+    width: fit-content;
+  }
 }
 
 .movie-card {
   position: relative;
   overflow: hidden;
   border-radius: 8px; /* Adjust as needed */
+}
+
+.movie-card-image-main {
+  aspect-ratio: 2/3;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .movie-card-image {

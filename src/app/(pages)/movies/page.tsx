@@ -1,109 +1,299 @@
 "use client";
-import React, { useEffect, useState, useContext, Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
-import { SearchContext } from "@/components";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/customui/Button";
-
-interface Movie {
-  id: string;
-  url: string;
-  title: string;
-  poster_path: string;
-  release_date: string;
-  type: string;
-}
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { LucideSettings2 } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
-export default function Movies() {
-  const [movies, setMovies] = useState<Movie[]>([]);
+interface Media {
+  id: string;
+  url: string;
+  title: string;
+  name?: string;
+  poster_path: string;
+  release_date?: string;
+  first_air_date?: string;
+  type: string;
+}
+
+export default function Discover() {
+  const [mediaType, setMediaType] = useState<string>("movie");
+  const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const { searchQuery, setSearchQuery } = useContext(SearchContext);
-  const searchParams = useSearchParams();
-  const queryFromURL = searchParams.get("search");
+  const [filters, setFilters] = useState({
+    sort_by: "popularity.desc",
+    year: "",
+  });
 
-  useEffect(() => {
-    if (queryFromURL && queryFromURL !== searchQuery) {
-      setSearchQuery(queryFromURL);
-    }
-  }, [queryFromURL, searchQuery, setSearchQuery]);
-
-  useEffect(() => {
-    if (searchQuery) {
-      fetchMovies(1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
-
-  const fetchMovies = async (page: number) => {
+  const fetchMedia = async (page: number, filters: any, mediaType: string) => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 5)); // Simulate a delay
-      const url = `https://api.themoviedb.org/3/search/movie?query=${searchQuery}&api_key=${TMDBkey}`;
-      const { data } = await axios.get(url, { params: { page } });
+      const yearFilter =
+        mediaType === "movie" ? "primary_release_year" : "first_air_date_year";
+      const sortByFilter = filters.sort_by.startsWith("release_date")
+        ? mediaType === "movie"
+          ? filters.sort_by
+          : filters.sort_by.replace("release_date", "first_air_date")
+        : filters.sort_by;
+      const params = {
+        ...filters,
+        [yearFilter]: filters.year,
+        sort_by: sortByFilter,
+      };
+      delete params.year;
+
+      const url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDBkey}&page=${page}`;
+      const { data } = await axios.get(url, { params });
       if (page === 1) {
-        setMovies(data.results);
+        setMedia(data.results);
       } else {
-        setMovies((prevMovies) => [...prevMovies, ...data.results]);
+        setMedia((prevMedia) => [...prevMedia, ...data.results]);
       }
       setHasMore(data.results.length > 0);
       setPage(page);
     } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchMedia(1, filters, mediaType);
+  }, [filters, mediaType]);
+
   const handleLoadMore = () => {
-    fetchMovies(page + 1);
+    fetchMedia(page + 1, filters, mediaType);
+  };
+
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: value,
+    }));
+  };
+
+  const handleMediaTypeChange = (value: string) => {
+    setMediaType(value);
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      year: "", // Reset year filter when changing media type
+    }));
   };
 
   return (
     <main className="p-2 pt-10">
+      <div className="flex max-sm:justify-between justify-end gap-2 mb-4 max-sm:h-[50%]">
+        <Popover>
+          <PopoverTrigger className="flex h-10 py-2 px-4 text-sm max-sm:h-8 max-sm:py-1 max-sm:px-2 max-sm:text-xs items-center justify-between rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-fit">
+            <LucideSettings2 size={16} className="mr-1" />
+            Filter
+          </PopoverTrigger>
+          <PopoverContent align="end" className="pt-3 px-0">
+            <p className="text-sm font-medium px-4">Filter</p>
+            <hr className="border-t my-2 w-full" />
+            <div className="flex flex-col gap-2 px-4 py-2">
+              <div className="text-sm font-medium w-full flex justify-between">
+                <p>Media Type</p>
+              </div>
+              <Select onValueChange={handleMediaTypeChange} value={mediaType}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Media Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="movie">Movies</SelectItem>
+                  <SelectItem value="tv">TV Shows</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <hr className="border-t my-2 w-full" />
+            <div className="flex flex-col gap-2 px-4 py-2">
+              <div className="text-sm font-medium w-full flex justify-between">
+                <p>Year</p>
+                <p
+                  className="text-xs dark:text-muted-foreground text-muted cursor-pointer"
+                  onClick={() => handleFilterChange("year", "")}
+                >
+                  Reset
+                </p>
+              </div>
+              <Input
+                type="number"
+                placeholder="Year"
+                className="w-full px-4"
+                value={filters.year}
+                onChange={(e) => handleFilterChange("year", e.target.value)}
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+        <Popover>
+          <PopoverTrigger className="flex h-10 py-2 px-4 text-sm max-sm:h-8 max-sm:py-1 max-sm:px-2 max-sm:text-xs items-center justify-between rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-fit">
+            <LucideSettings2 size={16} className="mr-1" />
+            Sort By
+          </PopoverTrigger>
+          <PopoverContent align="end" className="pt-3 pb-6">
+            <p className="text-sm font-medium">Sort By</p>
+            <hr className="border-t my-2 w-[calc(100% + 10px)] relative right-[25px] px-[58%]" />
+            <div className="flex flex-col gap-2">
+              {/* <Select
+                onValueChange={(value) => handleFilterChange("sort_by", value)}
+                value={filters.sort_by}
+              >
+                <RadioGroup defaultValue="option-one">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="option-one" id="option-one" />
+                    <p className="text-sm font-medium">Media Type</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="option-two" id="option-two" />
+                    <p className="text-sm font-medium">Media Type</p>
+                  </div>
+                </RadioGroup>
+                <SelectTrigger className="w-fit px-4">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="popularity.desc">
+                    Popularity Descending
+                  </SelectItem>
+                  <SelectItem value="popularity.asc">
+                    Popularity Ascending
+                  </SelectItem>
+                  <SelectItem value="release_date.desc">
+                    Release Date Descending
+                  </SelectItem>
+                  <SelectItem value="release_date.asc">
+                    Release Date Ascending
+                  </SelectItem>
+                  <SelectItem value="vote_average.desc">
+                    Vote Average Descending
+                  </SelectItem>
+                  <SelectItem value="vote_average.asc">
+                    Vote Average Ascending
+                  </SelectItem>
+                </SelectContent>
+              </Select> */}
+            </div>
+            <div className="flex flex-col gap-2 py-2">
+              <RadioGroup
+                onValueChange={(value) => handleFilterChange("sort_by", value)}
+                value={filters.sort_by}
+                defaultValue="popularity.asc"
+              >
+                <div className="text-sm font-medium w-full flex justify-between">
+                  <p>Popularity</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="popularity.desc" />
+                  <p className="text-sm font-medium">Ascending</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="popularity.asc" />
+                  <p className="text-sm font-medium">Descending</p>
+                </div>
+              </RadioGroup>
+              <hr className="border-t my-2 w-full" />
+              <RadioGroup
+                onValueChange={(value) => handleFilterChange("sort_by", value)}
+                value={filters.sort_by}
+                defaultValue="popularity.asc"
+              >
+                <div className="text-sm font-medium w-full flex justify-between">
+                  <p>Release Date</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="release_date.desc" />
+                  <p className="text-sm font-medium">Ascending</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="release_date.asc" />
+                  <p className="text-sm font-medium">Descending</p>
+                </div>
+              </RadioGroup>
+              <hr className="border-t my-2 w-full" />
+              <RadioGroup
+                onValueChange={(value) => handleFilterChange("sort_by", value)}
+                value={filters.sort_by}
+                defaultValue="popularity.asc"
+              >
+                <div className="text-sm font-medium w-full flex justify-between">
+                  <p>Vote Average</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="vote_average.desc" />
+                  <p className="text-sm font-medium">Ascending</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="vote_average.asc" />
+                  <p className="text-sm font-medium">Descending</p>
+                </div>
+              </RadioGroup>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+
       <div className="movie-grid">
-        <Suspense fallback={<div>Loading...</div>}>
-          {loading && page === 1
-            ? Array.from({ length: 24 }).map((_, index) => (
-                <div key={index} className="movie-card">
-                  <Skeleton className="w-auto h-[300px]" />
-                </div>
-              ))
-            : movies.map((movie) => (
-                <div key={movie.id} className="movie-card">
-                  <Link href={`/movies/movie/${movie.id}`}>
-                    <Image
-                      width={200}
-                      height={300}
-                      src={
-                        movie.poster_path
-                          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                          : "/public/images/bg-dark-texture1.png"
-                      }
-                      alt={movie.title}
-                      className="movie-card-image"
-                    />
-                    <div className="movie-card-info">
-                      <h2 className="movie-card-title">{movie.title}</h2>
-                      <p className="movie-card-release">
-                        {movie.release_date.slice(0, 4)}
-                      </p>
-                    </div>
-                  </Link>
-                </div>
-              ))}
-        </Suspense>
+        {loading && page === 1
+          ? Array.from({ length: 24 }).map((_, index) => (
+              <div key={index} className="movie-card">
+                <Skeleton className="w-auto h-[300px]" />
+              </div>
+            ))
+          : media.map((item) => (
+              <div key={item.id} className="movie-card">
+                <Link href={`movies/${mediaType}/${item.id}`}>
+                  <Image
+                    width={200}
+                    height={300}
+                    src={
+                      item.poster_path
+                        ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+                        : "/public/images/bg-dark-texture1.png"
+                    }
+                    alt={item.title || item.name || ""}
+                    className="movie-card-image-main"
+                  />
+                  <div className="movie-card-info">
+                    <h2 className="movie-card-title">
+                      {item.title || item.name}
+                    </h2>
+                    <p className="movie-card-release">
+                      {item.release_date
+                        ? item.release_date.slice(0, 4)
+                        : item.first_air_date?.slice(0, 4)}
+                    </p>
+                  </div>
+                </Link>
+              </div>
+            ))}
       </div>
       {hasMore && (
         <div className="flex justify-center mt-10">
           <Button
             variant={"subtle"}
-            className="hover:!bg-foreground/10 active:!bg-foreground/25"
+            className="hover:!bg-foreground/10 active:!bg-foreground/25 max-sm:text-sm max-sm:px-2 max-sm:py-1"
             onClick={handleLoadMore}
           >
             Load More

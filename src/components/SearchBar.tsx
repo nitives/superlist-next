@@ -26,11 +26,11 @@ export const SearchBar = () => {
           </kbd>
         </div>
         <div className="sm:hidden block">
-          <FaSearch className="fill-neutral-200" />
+          <FaSearch className="dark:fill-neutral-200 fill-foreground" />
         </div>
       </DialogTrigger>
       <DialogContent className="flex items-center bg-background/50 backdrop-blur-md p-2 !rounded-[1rem] search-con pl-5 gap-1">
-        <FaSearch className="fill-neutral-200" />
+        <FaSearch className="dark:fill-neutral-200 fill-foreground" />
         <Suspense>
           <input
             id="searchInput"

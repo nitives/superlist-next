@@ -67,7 +67,7 @@ export default function MediaDetails() {
   }
 
   return (
-    <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
+    <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
       <div className="max-sm:w-full flex items-center justify-center">
         <Image
           draggable={false}
@@ -80,7 +80,7 @@ export default function MediaDetails() {
               : "/public/images/bg-dark-texture1.png"
           }
           alt={movie.title}
-          className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] select-none"
+          className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] min-w-48 select-none"
         />
       </div>
       <div className="max-w-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">
@@ -92,16 +92,16 @@ export default function MediaDetails() {
           <h1 className="text-4xl font-bold">{movie.title}</h1>
           {movie.adult ? (
             <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.38rem] pr-[.4rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
-              E
+              Ee
             </p>
           ) : null}
         </div>
 
-        <div className="flex gap-1 items-center py-1 select-none">
+        <div className="flex gap-1 items-center py-1 select-none overflow-auto">
           {movie.genres.map((category: any, index: number) => (
             <p
               key={index}
-              className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit"
+              className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
             >
               {category.name}
             </p>

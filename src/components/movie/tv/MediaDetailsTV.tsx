@@ -39,12 +39,10 @@ export default function MediaDetailsTV({
       ? `${PLACEHOLDER_IMG_DARK}`
       : `${PLACEHOLDER_IMG_LIGHT}`;
 
-      console.log('tvX',tvX);
-
-  if (!tv) {
+  if (!tv || !tvX) {
     return (
-      <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
-        <div>
+      <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
+        <div className="max-sm:w-full flex items-center justify-center">
           <Skeleton
             id="tv.poster_path"
             className="w-[500px] h-[600px] mb-2 border rounded-2xl max-w-[400px]"
@@ -69,7 +67,11 @@ export default function MediaDetailsTV({
           </div>
           <Skeleton
             id="tv.overview.skeleton"
-            className="w-[40rem] h-10 rounded-md my-0.5"
+            className="w-[40rem] h-40 rounded-md my-0.5 mb-3"
+          />
+          <Skeleton
+            id="tv.seasons"
+            className="w-[40rem] h-60 rounded-md my-0.5"
           />
         </div>
       </div>
@@ -81,7 +83,7 @@ export default function MediaDetailsTV({
   };
 
   return (
-    <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
+    <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
       <div className="max-sm:w-full flex items-center justify-center">
         <Image
           draggable={false}
@@ -94,7 +96,7 @@ export default function MediaDetailsTV({
               : "/public/images/bg-dark-texture1.png"
           }
           alt={tv.name}
-          className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] select-none"
+          className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] min-w-48 select-none"
         />
       </div>
       <div className="max-w-[50rem] max-h-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">
@@ -104,9 +106,9 @@ export default function MediaDetailsTV({
         </p>
         <div className="flex">
           <h1 className="text-4xl font-bold">{tv.name}</h1>
-          {tv.adult ? (
-            <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.38rem] pr-[.4rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
-              E
+          {tv.adult !== false ? (
+            <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.42rem] pr-[.45rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
+              Adult
             </p>
           ) : null}
         </div>
@@ -115,7 +117,7 @@ export default function MediaDetailsTV({
           {tv.genres.map((category: any, index: number) => (
             <p
               key={index}
-              className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit"
+              className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
             >
               {category.name}
             </p>
@@ -125,12 +127,12 @@ export default function MediaDetailsTV({
             {tv.vote_average.toFixed(1)}
           </p>
         </div>
-        <p className="max-w-[40rem] text-neutral-400">{tv.overview}</p>
+        <p className="max-w-[40rem] text-muted-foreground">{tv.overview}</p>
         <Tabs
-          defaultValue={tvX.seasons[0].season.toString()}
+          defaultValue={tvX.seasons[0]?.season?.toString()}
           className="w-full mt-2"
         >
-          <TabsList>
+          <TabsList className="bg-muted/25 dark:bg-muted/100">
             {tvX.seasons.map((season: any) => (
               <TabsTrigger key={season.season} value={season.season.toString()}>
                 Season {season.season}
@@ -140,19 +142,23 @@ export default function MediaDetailsTV({
           {tvX.seasons.map((season: any) => (
             <TabsContent key={season.season} value={season.season.toString()}>
               <MediaPickerTV className="bg-transparent">
-                {season.episodes.map((episode: any, index: number) => (
-                  <button
-                    onClick={() =>
-                      handleEpisodeClick(
-                        `https://vidsrc.to/embed/tv/${id}/${season.season}/${episode.episode}`
-                      )
-                    }
-                    key={index}
-                    className="bg-muted hover:bg-muted-foreground/40 py-1.5 rounded-md flex text-xs w-12 px-1 text-foreground items-center justify-center"
-                  >
-                    {episode.episode}
-                  </button>
-                ))}
+                {season.episodes ? (
+                  season.episodes.map((episode: any, index: number) => (
+                    <button
+                      onClick={() =>
+                        handleEpisodeClick(
+                          `https://vidsrc.to/embed/tv/${id}/${season.season}/${episode.episode}`
+                        )
+                      }
+                      key={index}
+                      className="bg-muted/25 dark:bg-muted/100 hover:bg-muted-foreground/40 py-1.5 rounded-md flex text-xs w-12 px-1 text-foreground items-center justify-center"
+                    >
+                      {episode.episode}
+                    </button>
+                  ))
+                ) : (
+                  <p>No episodes available.</p>
+                )}
               </MediaPickerTV>
             </TabsContent>
           ))}

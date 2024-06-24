@@ -7,18 +7,33 @@ export default function VideoPlayer({
   className,
   width,
   height,
+  selectedSource,
 }: {
   className: string;
   width: string;
   height?: string;
+  selectedSource: string;
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
-  const src = `https://vidsrc.to/embed/movie/${id}`;
+
+  const getSourceUrl = (id: string) => {
+    const baseUrl =
+      selectedSource === "vidsrc"
+        ? "https://vidsrc.to/embed/movie"
+        : selectedSource === "vidsrc.pro"
+        ? "https://vidsrc.pro/embed/movie"
+        : selectedSource === "vidsrc.icu"
+        ? "https://vidsrc.icu/embed/movie"
+        : "https://vidsrc.me/embed/movie";
+    return `${baseUrl}/${id}`;
+  };
 
   const handleLoad = () => {
     setIsLoading(false);
   };
+
+  const movieId = Array.isArray(id) ? id[0] : id;
 
   return (
     <div className={className} style={{ width, height }}>
@@ -29,7 +44,7 @@ export default function VideoPlayer({
       )}
       <iframe
         className={`aspect-video rounded-2xl ${isLoading ? "hidden" : "block"}`}
-        src={src}
+        src={getSourceUrl(movieId)}
         width={width}
         height={height}
         onLoad={handleLoad}

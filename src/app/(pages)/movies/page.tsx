@@ -54,9 +54,7 @@ export default function Movies() {
       }
       setHasMore(data.results.length > 0);
       setPage(page);
-      console.log("Fetched movies:", data);
     } catch (error) {
-      console.error("Failed to fetch movies:", error);
     } finally {
       setLoading(false);
     }

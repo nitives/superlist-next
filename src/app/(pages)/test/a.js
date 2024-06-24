@@ -5,8 +5,9 @@ const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
 // const tmdb = async () => {
 //   const response = await fetch(
-//     `https://api.themoviedb.org/3/search/movie?query=Jack+Reacher&api_key=${TMDBkey}`
-//     // `https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDBkey}`
+    // `https://api.consumet.org/movies/flixhq/watch?episodeId=10766&mediaId=tv/watch-rick-and-morty-39480&server=vidcloud`
+    // `https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDBkey}`
+    // https://superlist-api-m.vercel.app/movies/flixhq/watch?episodeId=10766&mediaId=tv/watch-rick-and-morty-39480&server=upcloud
 //   );
 //   const data = await response.json();
 //   console.log(data);

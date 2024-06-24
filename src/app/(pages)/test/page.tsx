@@ -1,5 +1,4 @@
 "use client";
-import M3U8VideoPlayer from "@/components/movie/M3U8VideoPlayer";
 import React from "react";
 import ReactPlayer from "react-player";
 

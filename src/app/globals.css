@@ -480,9 +480,16 @@ div {
 @media (min-width: 1040px) {
   .recommendation-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
   }
+}
+
+.episodes-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  justify-items: center;
+  width: fit-content;
 }
 
 .movie-card {
@@ -496,6 +503,7 @@ div {
   width: 100%;
   object-fit: cover;
   border-radius: 8px;
+  max-height: calc(100% - 42px);
 }
 
 .movie-card-info {

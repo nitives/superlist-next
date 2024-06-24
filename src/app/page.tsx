@@ -7,13 +7,14 @@ import {
   Popular,
   Filter,
 } from "@/components";
-import { Pill } from "@/components/customui";
+import { FramerTest, Pill } from "@/components/customui";
 import sitesData from "./content/siteData.json";
 import React, { Suspense } from "react";
 import { useEffect, useState } from "react";
 import getConfig from "./content/localization/manager";
 import { Config } from "./content/localization/types/config";
 import { Button } from "@/components/customui/Button";
+import { motion } from "framer-motion";
 
 interface SiteData {
   name: string;
@@ -25,6 +26,7 @@ interface SiteData {
 export default function Home() {
   const [language, setLanguage] = useState<string>("en");
   const [config, setConfig] = useState<Config | null>(null);
+  const [isHover, setHover] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -44,13 +46,22 @@ export default function Home() {
             <Pill href="./" className="">
               Superlist 3.7
             </Pill>
-            <div className="uppercase text-center z-10">
-              <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">
-                WEBSITES CURATED FROM THE
-                <span className="text-[1em] opacity-50"> DARK SIDE</span> OF THE
-                WEB
-              </a>
-            </div>
+            <motion.div
+              initial={{
+                opacity: 0,
+                translateY: -10,
+                filter: "blur(5px)",
+              }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="uppercase text-center z-10">
+                <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">
+                  WEBSITES CURATED FROM THE
+                  <span className="text-[1em] opacity-50"> DARK SIDE</span> OF
+                  THE WEB
+                </a>
+              </div>
+            </motion.div>
             <AniBG />
           </div>
         </div>
@@ -82,15 +93,24 @@ export default function Home() {
           <Pill href="./" className="">
             <p>Superlist 3.7</p>
           </Pill>
-          <div className="uppercase text-center z-10">
-            <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">
-              {config.heroTitle[1]}{" "}
-              <span className="text-[1em] opacity-50">
-                {config.heroTitle[2]}
-              </span>{" "}
-              {config.heroTitle[3]}
-            </a>
-          </div>
+          <motion.div
+            animate={{
+              opacity: 1,
+              translateY: 0,
+              filter: "blur(0px)",
+            }}
+            transition={{ duration: 0.55 }}
+          >
+            <div className="uppercase text-center z-10">
+              <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">
+                {config.heroTitle[1]}{" "}
+                <span className="text-[1em] opacity-50">
+                  {config.heroTitle[2]}
+                </span>{" "}
+                {config.heroTitle[3]}
+              </a>
+            </div>
+          </motion.div>
           <AniBG />
         </div>
       </div>

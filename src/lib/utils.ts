@@ -65,6 +65,21 @@ export async function FetchRecommendationsTMDB(id: string, type: string) {
   }
 }
 
+export async function FetchMoreDetailsTMDB(id: string, type: string) {
+  try {
+    const url = new URL(
+      `https://superlist-api-m.vercel.app/meta/tmdb/info/${id}?type=${type}?api_key=${TMDBkey}`
+    );
+    const response = await fetch(url.toString(), { cache: "no-cache" });
+    if (!response.ok)
+      throw new Error("FetchMoreDetailsTMDB | Failed to fetch data");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log("Error:", error);
+  }
+}
+
 // export async function fetchVidSrc(
 //   type: string,
 //   id: string,

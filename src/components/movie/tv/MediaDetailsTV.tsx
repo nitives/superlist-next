@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PLACEHOLDER_IMG_LIGHT, PLACEHOLDER_IMG_DARK } from "../placeholder";
 import { useTheme } from "next-themes";
 import MediaPickerTV from "./MediaPickerTV";
+import Head from "next/head";
 
 export default function MediaDetailsTV({
   onEpisodeClick,
@@ -38,6 +39,12 @@ export default function MediaDetailsTV({
     theme === "dark" || "system"
       ? `${PLACEHOLDER_IMG_DARK}`
       : `${PLACEHOLDER_IMG_LIGHT}`;
+
+  useEffect(() => {
+    if (tv) {
+      document.title = "Superlist - " + tv.name;
+    }
+  });
 
   if (!tv || !tvX) {
     return (
@@ -83,87 +90,95 @@ export default function MediaDetailsTV({
   };
 
   return (
-    <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
-      <div className="max-sm:w-full flex items-center justify-center">
-        <Image
-          draggable={false}
-          width={400}
-          height={600}
-          placeholder={`data:image/${placeholderImage}`}
-          src={
-            tv.poster_path
-              ? `https://image.tmdb.org/t/p/w500${tv.poster_path}`
-              : "/public/images/bg-dark-texture1.png"
-          }
-          alt={tv.name}
-          className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] min-w-48 select-none"
-        />
-      </div>
-      <div className="max-w-[50rem] max-h-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">
-        <p className="text-sm text-muted dark:text-muted-foreground">
-          <TimeConvert>{tv.first_air_date}</TimeConvert> -{" "}
-          <TimeConvert>{tv.last_air_date}</TimeConvert>
-        </p>
-        <div className="flex">
-          <h1 className="text-4xl font-bold">{tv.name}</h1>
-          {tv.adult !== false ? (
-            <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.42rem] pr-[.45rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
-              Adult
-            </p>
-          ) : null}
+    <>
+      <Head>
+        <title>Superlis</title>
+      </Head>
+      <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
+        <div className="max-sm:w-full flex items-center justify-center">
+          <Image
+            draggable={false}
+            width={400}
+            height={600}
+            placeholder={`data:image/${placeholderImage}`}
+            src={
+              tv.poster_path
+                ? `https://image.tmdb.org/t/p/w500${tv.poster_path}`
+                : "/public/images/bg-dark-texture1.png"
+            }
+            alt={tv.name}
+            className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] min-w-48 select-none"
+          />
         </div>
-
-        <div className="flex gap-1 items-center py-1 select-none">
-          {tv.genres.map((category: any, index: number) => (
-            <p
-              key={index}
-              className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
-            >
-              {category.name}
-            </p>
-          ))}
-          <span className="text-sm text-muted">|</span>
-          <p className="bg-foreground p-1 rounded-md flex text-xs min-w-6w text-background">
-            {tv.vote_average.toFixed(1)}
+        <div className="max-w-[50rem] max-h-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">
+          <p className="text-sm text-muted dark:text-muted-foreground">
+            <TimeConvert>{tv.first_air_date}</TimeConvert> -{" "}
+            <TimeConvert>{tv.last_air_date}</TimeConvert>
           </p>
-        </div>
-        <p className="max-w-[40rem] text-muted-foreground">{tv.overview}</p>
-        <Tabs
-          defaultValue={tvX.seasons[0]?.season?.toString()}
-          className="w-full mt-2"
-        >
-          <TabsList className="bg-muted/25 dark:bg-muted/100">
-            {tvX.seasons.map((season: any) => (
-              <TabsTrigger key={season.season} value={season.season.toString()}>
-                Season {season.season}
-              </TabsTrigger>
+          <div className="flex">
+            <h1 className="text-4xl font-bold">{tv.name}</h1>
+            {tv.adult !== false ? (
+              <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.42rem] pr-[.45rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
+                Adult
+              </p>
+            ) : null}
+          </div>
+
+          <div className="flex gap-1 items-center py-1 select-none">
+            {tv.genres.map((category: any, index: number) => (
+              <p
+                key={index}
+                className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
+              >
+                {category.name}
+              </p>
             ))}
-          </TabsList>
-          {tvX.seasons.map((season: any) => (
-            <TabsContent key={season.season} value={season.season.toString()}>
-              <MediaPickerTV className="bg-transparent">
-                {season.episodes ? (
-                  season.episodes.map((episode: any, index: number) => (
-                    <button
-                      onClick={() =>
-                        handleEpisodeClick(
-                          `https://vidsrc.to/embed/tv/${id}/${season.season}/${episode.episode}`
-                        )
-                      }
-                      key={index}
-                      className="bg-muted/25 dark:bg-muted/100 hover:bg-muted-foreground/40 py-1.5 rounded-md flex text-xs w-12 px-1 text-foreground items-center justify-center"
-                    >
-                      {episode.episode}
-                    </button>
-                  ))
-                ) : (
-                  <p>No episodes available.</p>
-                )}
-              </MediaPickerTV>
-            </TabsContent>
-          ))}
-        </Tabs>
+            <span className="text-sm text-muted">|</span>
+            <p className="bg-foreground p-1 rounded-md flex text-xs min-w-6w text-background">
+              {tv.vote_average.toFixed(1)}
+            </p>
+          </div>
+          <p className="max-w-[40rem] text-muted-foreground">{tv.overview}</p>
+          <Tabs
+            defaultValue={tvX.seasons[0]?.season?.toString()}
+            className="w-full mt-2"
+          >
+            <TabsList className="bg-muted/25 dark:bg-muted/100">
+              {tvX.seasons.map((season: any) => (
+                <TabsTrigger
+                  key={season.season}
+                  value={season.season.toString()}
+                >
+                  Season {season.season}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {tvX.seasons.map((season: any) => (
+              <TabsContent key={season.season} value={season.season.toString()}>
+                <MediaPickerTV className="bg-transparent">
+                  {season.episodes ? (
+                    season.episodes.map((episode: any, index: number) => (
+                      <button
+                        onClick={() =>
+                          handleEpisodeClick(
+                            `https://vidsrc.to/embed/tv/${id}/${season.season}/${episode.episode}`
+                          )
+                        }
+                        key={index}
+                        className="bg-muted/25 dark:bg-muted/100 hover:bg-muted-foreground/40 py-1.5 rounded-md flex text-xs w-12 px-1 text-foreground items-center justify-center"
+                      >
+                        {episode.episode}
+                      </button>
+                    ))
+                  ) : (
+                    <p>No episodes available.</p>
+                  )}
+                </MediaPickerTV>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

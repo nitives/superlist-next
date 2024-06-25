@@ -8,6 +8,7 @@ import { Skeleton } from "../ui/skeleton";
 import { PLACEHOLDER_IMG_LIGHT, PLACEHOLDER_IMG_DARK } from "./placeholder";
 import { useTheme } from "next-themes";
 import DurationConvert from "./DurationConvert";
+import Head from "next/head";
 
 export default function MediaDetails() {
   const { id } = useParams();
@@ -30,6 +31,12 @@ export default function MediaDetails() {
     theme === "dark" || "system"
       ? `${PLACEHOLDER_IMG_DARK}`
       : `${PLACEHOLDER_IMG_LIGHT}`;
+
+  useEffect(() => {
+    if (movie) {
+      document.title = "Superlist - " + movie.title;
+    }
+  });
 
   if (!movie) {
     return (
@@ -67,53 +74,58 @@ export default function MediaDetails() {
   }
 
   return (
-    <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
-      <div className="max-sm:w-full flex items-center justify-center">
-        <Image
-          draggable={false}
-          width={400}
-          height={600}
-          placeholder={`data:image/${placeholderImage}`}
-          src={
-            movie.poster_path
-              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-              : "/public/images/bg-dark-texture1.png"
-          }
-          alt={movie.title}
-          className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] min-w-48 select-none"
-        />
-      </div>
-      <div className="max-w-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">
-        <p className="text-sm text-muted dark:text-muted-foreground">
-          <TimeConvert>{movie.release_date}</TimeConvert> ·{" "}
-          <DurationConvert duration={movie.runtime} />
-        </p>
-        <div className="flex">
-          <h1 className="text-4xl font-bold">{movie.title}</h1>
-          {movie.adult ? (
-            <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.38rem] pr-[.4rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
-              Ee
-            </p>
-          ) : null}
+    <>
+      <Head>
+        <title>Superlist - {movie.title}</title>{" "}
+      </Head>
+      <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
+        <div className="max-sm:w-full flex items-center justify-center">
+          <Image
+            draggable={false}
+            width={400}
+            height={600}
+            placeholder={`data:image/${placeholderImage}`}
+            src={
+              movie.poster_path
+                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                : "/public/images/bg-dark-texture1.png"
+            }
+            alt={movie.title}
+            className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] min-w-48 select-none"
+          />
         </div>
-
-        <div className="flex gap-1 items-center py-1 select-none overflow-auto">
-          {movie.genres.map((category: any, index: number) => (
-            <p
-              key={index}
-              className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
-            >
-              {category.name}
-            </p>
-          ))}
-          <span className="text-sm text-muted">|</span>
-          <p className="bg-foreground p-1 rounded-md flex text-xs min-w-6w text-background">
-            {movie.vote_average.toFixed(1)}
+        <div className="max-w-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">
+          <p className="text-sm text-muted dark:text-muted-foreground">
+            <TimeConvert>{movie.release_date}</TimeConvert> ·{" "}
+            <DurationConvert duration={movie.runtime} />
           </p>
-        </div>
+          <div className="flex">
+            <h1 className="text-4xl font-bold">{movie.title}</h1>
+            {movie.adult ? (
+              <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.38rem] pr-[.4rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
+                Ee
+              </p>
+            ) : null}
+          </div>
 
-        <p className="max-w-[40rem] text-neutral-400">{movie.overview}</p>
+          <div className="flex gap-1 items-center py-1 select-none overflow-auto">
+            {movie.genres.map((category: any, index: number) => (
+              <p
+                key={index}
+                className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
+              >
+                {category.name}
+              </p>
+            ))}
+            <span className="text-sm text-muted">|</span>
+            <p className="bg-foreground p-1 rounded-md flex text-xs min-w-6w text-background">
+              {movie.vote_average.toFixed(1)}
+            </p>
+          </div>
+
+          <p className="max-w-[40rem] text-neutral-400">{movie.overview}</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

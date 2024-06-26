@@ -24,8 +24,6 @@ export default function Movies() {
         <div className="grid gap-2">
           <div className="px-2 w-full flex flex-col items-center justify-center gap-10">
             <VideoPlayer
-              height="100%"
-              width="100%"
               className="aspect-video rounded-2xl h-[50rem] video-player"
               selectedSource={selectedSource}
             />

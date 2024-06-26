@@ -10,7 +10,7 @@ export default function VideoPlayer({
   selectedSource,
 }: {
   className: string;
-  width: string;
+  width?: string;
   height?: string;
   selectedSource: string;
 }) {

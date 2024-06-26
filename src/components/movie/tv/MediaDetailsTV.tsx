@@ -92,7 +92,7 @@ export default function MediaDetailsTV({
   return (
     <>
       <Head>
-        <title>Superlis</title>
+        <title>Superlist - {tv.name}</title>{" "}
       </Head>
       <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
         <div className="max-sm:w-full flex items-center justify-center">

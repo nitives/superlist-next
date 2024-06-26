@@ -66,7 +66,7 @@ export default function MediaDetailsTV({
               className="w-[10rem] h-8 rounded-md my-0.5"
             />
           </div>
-          <div className="flex gap-1 items-center py-1 select-none">
+          <div className="flex gap-1 items-center py-1 select-none flex-wrap">
             <Skeleton
               id="tv.genres.skeleton"
               className="w-[15rem] h-7 rounded-md my-0.5"
@@ -124,7 +124,7 @@ export default function MediaDetailsTV({
             ) : null}
           </div>
 
-          <div className="flex gap-1 items-center py-1 select-none">
+          <div className="flex gap-1 items-center py-1 select-none flex-wrap">
             {tv.genres.map((category: any, index: number) => (
               <p
                 key={index}

@@ -1,32 +1,39 @@
-const type = "movie";
-const id = "634649";
-const keyword = "deadpool";
-const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-
-// const tmdb = async () => {
-//   const response = await fetch(
-    // `https://api.consumet.org/movies/flixhq/watch?episodeId=10766&mediaId=tv/watch-rick-and-morty-39480&server=vidcloud`
-    // `https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDBkey}`
-    // https://superlist-api-m.vercel.app/movies/flixhq/watch?episodeId=10766&mediaId=tv/watch-rick-and-morty-39480&server=upcloud
-//   );
-//   const data = await response.json();
-//   console.log(data);
-// };
-// tmdb();
-
-// const options = {
-//   method: "GET",
-//   headers: {
-//     accept: "application/json",
-//     Authorization:
-//       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyOWE1NDRlZWM1ZmQxMDE0ODQ3NzhiZTcyNTk1ZTYwOSIsIm5iZiI6MTcxOTA1MzY4My4yNjMxOTQsInN1YiI6IjY1YjlmN2UyNzM5MGMwMDE3Y2QwNDVkZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Xmr2Rd9xEmEnLOvS88DxbBi5t6kNL1aTRKTSeXIvr5U",
-//   },
-// };
-
-// fetch(
-//   `https://api.themoviedb.org/3/search/keyword?query=${keyword}&page=1`,
-//   options
-// )
-//   .then((response) => response.json())
-//   .then((response) => console.log(response))
-//   .catch((err) => console.error(err));
+// API response data
+const apiResponse = {
+    "status": 200,
+    "info": "success",
+    "sources": [
+      {
+        "name": "Filemoon",
+        "data": {
+          "stream": "https://be6721.rcr72.waw04.cdn112.com/hls2/01/00385/enbd6kvl2xel_x/master.m3u8?t=0lNCcJdYjiWT9KLXIujrDs51MvD_iU0bWN5aNNan3LQ&s=1719321028&e=43200&f=1929547&srv=14&asn=14618&sp=5500",
+          "subtitle": [
+            {
+              "lang": "French",
+              "file": "https://rapidcdn.cc/sub/cache/subtitle/13823647.vtt"
+            },
+            {
+              "lang": "Hebrew",
+              "file": "https://rapidcdn.cc/sub/cache/subtitle/13823654.vtt"
+            },
+            {
+              "lang": "Turkish",
+              "file": "https://rapidcdn.cc/sub/cache/subtitle/13823651.vtt"
+            }
+          ]
+        }
+      }
+    ]
+  };
+  
+  // Extract the stream link from the API response
+  const streamLink = apiResponse.sources[0].data.stream;
+  
+  // Your application URL
+  const appUrl = 'https://rabbitstream.net/';
+  
+  // Encode the stream link and construct the proxy URL
+  const proxyUrl = `https://m3u8proxy.cadenrichards15.workers.dev/?url=${encodeURIComponent(streamLink)}&referer=${encodeURIComponent(appUrl)}&origin=${encodeURIComponent(appUrl)}`;
+  
+  console.log(proxyUrl);
+  

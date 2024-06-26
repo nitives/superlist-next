@@ -4,6 +4,7 @@ import {
   SearchBar,
   Socials,
   BurgerBar,
+  ThemeSwitch,
 } from "@/components";
 import Link from "next/link";
 export const Navbar = () => {
@@ -20,9 +21,12 @@ export const Navbar = () => {
         <Link href={"/downloads"}>Downloads</Link>
         <Link href={"/movies"}>Movies</Link>
       </div>
-      <div className="gap-4 max-sm:hidden w-[40%] flex">
+      <div className="gap-4 max-sm:hidden flex w-[40%] items-center">
         <SearchBar />
-        <Socials />
+        <div className="hidden md:flex gap-3 items-center">
+          <Socials />
+          <ThemeSwitch />
+        </div>
       </div>
       <div className="sm:hidden">
         <BurgerBar />

@@ -1,70 +1,59 @@
 "use client";
+import React from "react";
 import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition,
-} from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/16/solid";
-import { Button } from "./Button";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { LucideSettings2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import siteData from "@/app/content/siteData.json";
 
-/**
- * The `Filter` component provides a dropdown menu with various filtering options for the user interface.
- * It uses the `@headlessui/react` library to implement the dropdown menu functionality.
- * The menu includes options to edit, duplicate, archive, and delete items.
- * The component is exported as a default export.
- */
-export const Filter = () => {
+export const Filter = ({
+  selectedCategories,
+  setSelectedCategories,
+}: {
+  selectedCategories: string[];
+  setSelectedCategories: (categories: string[]) => void;
+}) => {
+  const categories = Array.from(
+    new Set(siteData.flatMap((site) => site.categories))
+  );
+
+  const handleCheckboxChange = (category: string) => {
+    setSelectedCategories((prevCategories) =>
+      prevCategories.includes(category)
+        ? prevCategories.filter((cat) => cat !== category)
+        : [...prevCategories, category]
+    );
+  };
+
   return (
     <div className="">
-      <Menu>
-        <MenuButton>
-          <div>
-            <Button variant={"subtle"}>
-              Filter
-              <ChevronDownIcon className="size-4 relative left-1" />
-            </Button>
-          </div>
-        </MenuButton>
-        <Transition
-          enter="transition ease-out duration-75"
-          enterFrom="opacity-0 scale-95"
-          enterTo="opacity-100 scale-100"
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100 scale-100"
-          leaveTo="opacity-0 scale-95"
-        >
-          <MenuItems
-            anchor="bottom end"
-            className="absolute z-10 mt-2 w-48 origin-top-right bg-background/50 rounded-xl main-border backdrop-blur-[5px] shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-          >
-            <div className="p-1">
-              <MenuItem>
-                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
-                  Pirate
-                </button>
-              </MenuItem>
-              <MenuItem>
-                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
-                  Entertainment
-                </button>
-              </MenuItem>
-              {/* <div className="my-1 h-px bg-white/5" /> */}
-              <MenuItem>
-                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
-                  Creative
-                </button>
-              </MenuItem>
-              <MenuItem>
-                <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-sm data-[focus]:bg-[#0d0d0d]/5 dark:hover:bg-foreground/10 hover:bg-[#0d0d0d]/10 hover:text-foreground text-foreground">
-                  AI
-                </button>
-              </MenuItem>
+      <Popover>
+        <PopoverTrigger className="flex h-10 py-2 px-4 text-sm max-sm:h-8 max-sm:py-1 max-sm:px-2 max-sm:text-xs items-center justify-between rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-fit">
+          <LucideSettings2 size={16} className="mr-1" />
+          Filter
+        </PopoverTrigger>
+        <PopoverContent align="start" className="pt-3 px-0">
+          <p className="text-sm font-medium px-4">Filter</p>
+          <hr className="border-t my-2 w-full" />
+          <div className="flex flex-col gap-2 px-4 py-2">
+            <div className="text-sm font-medium w-full flex justify-between">
+              <p>Categories</p>
             </div>
-          </MenuItems>
-        </Transition>
-      </Menu>
+            {categories.map((category) => (
+              <div key={category} className="flex items-center space-x-2">
+                <Checkbox
+                  checked={selectedCategories.includes(category)}
+                  onCheckedChange={() => handleCheckboxChange(category)}
+                />
+                <p className="text-sm font-medium">{category}</p>
+              </div>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };

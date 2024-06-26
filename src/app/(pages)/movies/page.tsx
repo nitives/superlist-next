@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { LucideSettings2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SearchContext } from "@/components/SearchContext";
 
 const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
@@ -35,6 +36,7 @@ interface Media {
 }
 
 export default function Discover() {
+  const { searchQuery } = useContext(SearchContext);
   const [mediaType, setMediaType] = useState<string>("movie");
   const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -62,7 +64,10 @@ export default function Discover() {
       };
       delete params.year;
 
-      const url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDBkey}&page=${page}`;
+      let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${TMDBkey}&page=${page}`;
+      if (searchQuery) {
+        url = `https://api.themoviedb.org/3/search/${mediaType}?api_key=${TMDBkey}&query=${searchQuery}&page=${page}`;
+      }
       const { data } = await axios.get(url, { params });
       if (page === 1) {
         setMedia(data.results);
@@ -80,7 +85,7 @@ export default function Discover() {
 
   useEffect(() => {
     fetchMedia(1, filters, mediaType);
-  }, [filters, mediaType]);
+  }, [filters, mediaType, searchQuery]);
 
   const handleLoadMore = () => {
     fetchMedia(page + 1, filters, mediaType);
@@ -156,46 +161,6 @@ export default function Discover() {
             <p className="text-sm font-medium">Sort By</p>
             <hr className="border-t my-2 w-[calc(100% + 10px)] relative right-[25px] px-[58%]" />
             <div className="flex flex-col gap-2">
-              {/* <Select
-                onValueChange={(value) => handleFilterChange("sort_by", value)}
-                value={filters.sort_by}
-              >
-                <RadioGroup defaultValue="option-one">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="option-one" id="option-one" />
-                    <p className="text-sm font-medium">Media Type</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="option-two" id="option-two" />
-                    <p className="text-sm font-medium">Media Type</p>
-                  </div>
-                </RadioGroup>
-                <SelectTrigger className="w-fit px-4">
-                  <SelectValue placeholder="Sort By" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="popularity.desc">
-                    Popularity Descending
-                  </SelectItem>
-                  <SelectItem value="popularity.asc">
-                    Popularity Ascending
-                  </SelectItem>
-                  <SelectItem value="release_date.desc">
-                    Release Date Descending
-                  </SelectItem>
-                  <SelectItem value="release_date.asc">
-                    Release Date Ascending
-                  </SelectItem>
-                  <SelectItem value="vote_average.desc">
-                    Vote Average Descending
-                  </SelectItem>
-                  <SelectItem value="vote_average.asc">
-                    Vote Average Ascending
-                  </SelectItem>
-                </SelectContent>
-              </Select> */}
-            </div>
-            <div className="flex flex-col gap-2 py-2">
               <RadioGroup
                 onValueChange={(value) => handleFilterChange("sort_by", value)}
                 value={filters.sort_by}

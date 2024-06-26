@@ -9,11 +9,9 @@ import {
 } from "@/components";
 import { FramerTest, Pill } from "@/components/customui";
 import sitesData from "./content/siteData.json";
-import React, { Suspense } from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import getConfig from "./content/localization/manager";
 import { Config } from "./content/localization/types/config";
-import { Button } from "@/components/customui/Button";
 import { motion } from "framer-motion";
 
 interface SiteData {
@@ -26,7 +24,7 @@ interface SiteData {
 export default function Home() {
   const [language, setLanguage] = useState<string>("en");
   const [config, setConfig] = useState<Config | null>(null);
-  const [isHover, setHover] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -37,6 +35,15 @@ export default function Home() {
   useEffect(() => {
     setConfig(getConfig(language));
   }, [language]);
+
+  const filteredSites =
+    selectedCategories.length === 0
+      ? sitesData
+      : sitesData.filter((site) =>
+          selectedCategories.every((category) =>
+            site.categories.includes(category)
+          )
+        );
 
   if (!config) {
     return (
@@ -66,21 +73,27 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full mx-auto px-5 py-5 justify-between flex">
-          <Button variant={"subtle"}>Popular</Button>
-          <Button variant={"subtle"}>Filter</Button>
-        </div>
-        {/* <p>DEV - Current language is: {language}</p> */}
+        <FilterBar
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+        />
+
         <SiteContainer>
-          {sitesData.map((site: SiteData, index: number) => (
-            <Site
-              key={index}
-              name={site.name}
-              categories={site.categories}
-              imageSrc={site.imageSrc}
-              link={site.link}
-            />
-          ))}
+          {filteredSites.length > 0 ? (
+            filteredSites.map((site: SiteData, index: number) => (
+              <Site
+                key={index}
+                name={site.name}
+                categories={site.categories}
+                imageSrc={site.imageSrc}
+                link={site.link}
+              />
+            ))
+          ) : (
+            <div className="text-center text-xl font-semibold text-muted-foreground">
+              No sites
+            </div>
+          )}
         </SiteContainer>
       </main>
     );
@@ -115,18 +128,27 @@ export default function Home() {
         </div>
       </div>
 
-      <FilterBar />
-      {/* <p>DEV - Current language is: {language}</p> */}
+      <FilterBar
+        selectedCategories={selectedCategories}
+        setSelectedCategories={setSelectedCategories}
+      />
+
       <SiteContainer>
-        {sitesData.map((site: SiteData, index: number) => (
-          <Site
-            key={index}
-            name={site.name}
-            categories={site.categories}
-            imageSrc={site.imageSrc}
-            link={site.link}
-          />
-        ))}
+        {filteredSites.length > 0 ? (
+          filteredSites.map((site: SiteData, index: number) => (
+            <Site
+              key={index}
+              name={site.name}
+              categories={site.categories}
+              imageSrc={site.imageSrc}
+              link={site.link}
+            />
+          ))
+        ) : (
+          <div className="absolute w-full text-center text-xl font-semibold text-muted-foreground">
+            No sites
+          </div>
+        )}
       </SiteContainer>
     </main>
   );

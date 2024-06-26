@@ -37,7 +37,7 @@ export default function MediaRecommendationsTV() {
     return (
       <>
         <p className="mt-10 text-3xl font-bold px-2">Recommended TV Shows</p>
-        <div className="flex w-full h-auto pt-[.5rem] px-1 gap-4 justify-center">
+        <div className="flex  h-auto pt-[.5rem] px-1 gap-4 justify-center">
           <div className="recommendation-grid">
             {Array.from({ length: 10 }).map((_, index) => (
               <RecommendationCard key={index} />
@@ -51,7 +51,7 @@ export default function MediaRecommendationsTV() {
   return (
     <>
       <p className="mt-10 text-3xl font-bold px-2">Recommended TV Shows</p>
-      <div className="flex w-full h-auto pt-[.5rem] px-1 gap-4 justify-center">
+      <div className="flex  h-auto pt-[.5rem] px-1 gap-4 justify-center">
         <div className="recommendation-grid">
           {tv.results.map((recommendation: any) => (
             <Link href={`./${recommendation.id}`} key={recommendation.id}>

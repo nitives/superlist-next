@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { FetchRecommendationsTMDB } from "@/lib/utils";
 import { Skeleton } from "../ui/skeleton";
 import DurationConvert from "./DurationConvert";
@@ -25,7 +25,7 @@ export default function MediaRecommendations() {
 
   const RecommendationCard = () => (
     <div className="">
-      <Skeleton className="mb-1 border rounded-[8px] aspect-[2/3] w-[252px] object-cover" />
+      <Skeleton className="mb-1 border rounded-[8px] aspect-[2/3] w-[15.75rem] object-cover" />
       <Skeleton className="h-10 rounded-[8px] mb-1" />
     </div>
   );

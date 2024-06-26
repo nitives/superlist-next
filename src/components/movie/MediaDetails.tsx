@@ -40,7 +40,7 @@ export default function MediaDetails() {
 
   if (!movie) {
     return (
-      <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
+      <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
         <div>
           <Skeleton
             id="movie.poster_path"
@@ -58,7 +58,7 @@ export default function MediaDetails() {
               className="w-[10rem] h-8 rounded-md my-0.5"
             />
           </div>
-          <div className="flex gap-1 items-center py-1 select-none">
+          <div className="flex gap-1 items-center py-1 select-none flex-wrap">
             <Skeleton
               id="movie.genres.skeleton"
               className="w-[15rem] h-7 rounded-md my-0.5"
@@ -108,7 +108,7 @@ export default function MediaDetails() {
             ) : null}
           </div>
 
-          <div className="flex gap-1 items-center py-1 select-none overflow-auto">
+          <div className="flex gap-1 items-center py-1 select-none flex-wrap">
             {movie.genres.map((category: any, index: number) => (
               <p
                 key={index}

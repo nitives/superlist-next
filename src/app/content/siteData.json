@@ -149,7 +149,7 @@
     "important": "",
     "imageSrc": "/images/cache/captures/Comick.png",
     "favicon": "/images/favicons/comick.ico",
-    "link": "https://www.comick.com",
+    "link": "https://comick.io/home",
     "socialLinks": {
       "twitter": "https://twitter.com/comick",
       "github": "https://github.com/comick"
@@ -157,12 +157,12 @@
   },
   {
     "name": "NTSCQ",
-    "categories": ["Creative"],
-    "description": "Creative design and digital art resources.",
+    "categories": ["VFX", "Creative"],
+    "description": "VHS Emulator.",
     "important": "",
     "imageSrc": "/images/cache/captures/NTSCQ.gif",
     "favicon": "/images/favicons/ntscq.ico",
-    "link": "https://www.ntscq.com",
+    "link": "https://github.com/JargeZ/ntscqt/releases/tag/v1.5.0",
     "socialLinks": {
       "twitter": "https://twitter.com/ntscq",
       "github": "https://github.com/ntscq"
@@ -205,6 +205,32 @@
     "socialLinks": {
       "twitter": "https://twitter.com/genp",
       "github": "https://github.com/genp"
+    }
+  },
+  {
+    "name": "animeclips.online",
+    "categories": ["VFX", "Creative"],
+    "description": "Anime Clips for Editing",
+    "important": "",
+    "imageSrc": "/images/cache/captures/animeclipsonline.png",
+    "favicon": "/images/favicons/animeclips.online.ico",
+    "link": "https://animeclips.online/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/animeclips.online",
+      "github": "https://github.com/animeclips.online"
+    }
+  },
+  {
+    "name": "OVAGames",
+    "categories": ["Pirate", "Games"],
+    "description": "Good site for downloading games.",
+    "important": "",
+    "imageSrc": "/images/cache/captures/OVAGames.png",
+    "favicon": "/images/favicons/OVAGames.ico",
+    "link": "https://www.ovagames.com/",
+    "socialLinks": {
+      "twitter": "https://twitter.com/OVAGames",
+      "github": "https://github.com/OVAGames"
     }
   }
 ]

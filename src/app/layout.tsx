@@ -69,8 +69,7 @@ export default function RootLayout({
         <meta name="twitter:image:width" content="1200" />
         <meta name="twitter:image:height" content="628" />
       </head>
-      <Analytics />
-      <SpeedInsights />
+
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -85,6 +84,8 @@ export default function RootLayout({
           </SearchProvider>
         </ThemeProvider>
       </body>
+      <Analytics />
+      <SpeedInsights />
     </html>
   );
 }

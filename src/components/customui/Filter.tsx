@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { LucideSettings2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import siteData from "@/app/content/siteData.json";
+import siteData from "../../../public/data/siteData.json";
 
 export const Filter = ({
   selectedCategories,

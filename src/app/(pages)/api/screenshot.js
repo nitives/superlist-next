@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer";
 import fs from "fs";
 import path from "path";
-import sitesData from "../../content/siteData.json" assert { type: "json" };
+import sitesData from "../../../../public/data/siteData.json" assert { type: "json" };
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -8,7 +8,7 @@ import {
   Filter,
 } from "@/components";
 import { FramerTest, Pill } from "@/components/customui";
-import sitesData from "./content/siteData.json";
+import sitesData from "../../public/data/siteData.json";
 import React, { useEffect, useState } from "react";
 import getConfig from "./content/localization/manager";
 import { Config } from "./content/localization/types/config";

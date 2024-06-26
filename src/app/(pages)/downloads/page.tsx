@@ -1,5 +1,5 @@
 "use client";
-import downloadsData from "../../content/downloadsData.json";
+import downloadsData from "../../../../public/data/downloadsData.json";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ColorThief from "colorthief";

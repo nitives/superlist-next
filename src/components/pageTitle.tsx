@@ -1,5 +1,5 @@
 import Head from "next/head";
-import sitesData from "../app/content/siteData.json";
+import sitesData from "../../public/data/siteData.json";
 const site = sitesData;
 
 interface PageTitleProps {

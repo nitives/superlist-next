@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
-import sitesData from "../../../content/siteData.json";
+import sitesData from "../../../../../public/data/siteData.json";
 import Image from "next/image";
 import { Button } from "@/components/customui/Button";
 import { BookmarkIcon } from "@heroicons/react/24/outline";

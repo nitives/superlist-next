@@ -62,6 +62,7 @@ export default function Downloads() {
                 width={500}
                 height={300}
                 className="rounded-lg mb-2 object-cover aspect-video border"
+                loading="lazy"
               />
             </div>
 

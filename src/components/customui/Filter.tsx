@@ -13,17 +13,17 @@ export const Filter = ({
   selectedCategories,
   setSelectedCategories,
 }: {
-  selectedCategories: string[];
-  setSelectedCategories: (categories: string[]) => void;
+  selectedCategories: any;
+  setSelectedCategories: (categories: any) => void;
 }) => {
   const categories = Array.from(
     new Set(siteData.flatMap((site) => site.categories))
   );
 
   const handleCheckboxChange = (category: string) => {
-    setSelectedCategories((prevCategories) =>
+    setSelectedCategories((prevCategories: any) =>
       prevCategories.includes(category)
-        ? prevCategories.filter((cat) => cat !== category)
+        ? prevCategories.filter((cat: any) => cat !== category)
         : [...prevCategories, category]
     );
   };

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Footer, Navbar, SearchProvider, ThemeProvider } from "@/components";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -67,6 +69,8 @@ export default function RootLayout({
         <meta name="twitter:image:width" content="1200" />
         <meta name="twitter:image:height" content="628" />
       </head>
+      <Analytics />
+      <SpeedInsights />
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"

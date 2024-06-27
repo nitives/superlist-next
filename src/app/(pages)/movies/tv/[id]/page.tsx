@@ -31,11 +31,12 @@ export default function TVShows() {
         <div className="grid gap-2">
           <div className="px-2 w-full flex flex-col items-center justify-center gap-10">
             <VideoPlayerTV
-              height="100%"
-              width="100%"
-              className="aspect-video rounded-2xl h-full video-player"
+              className="aspect-video rounded-2xl max-h-[50rem] w-full flex video-player"
               episodeUrl={selectedEpisodeUrl}
               selectedSource={selectedSource}
+              height="100%"
+              width="100%"
+              Responsiveness
             />
             <div className="flex gap-2 mb-4">
               <Select onValueChange={handleSourceChange} value={selectedSource}>

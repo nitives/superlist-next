@@ -24,8 +24,10 @@ export default function Movies() {
         <div className="grid gap-2">
           <div className="px-2 w-full flex flex-col items-center justify-center gap-10">
             <VideoPlayer
-              className="aspect-video rounded-2xl h-[50rem] video-player"
+              className="aspect-video rounded-2xl max-h-[50rem] w-full flex video-player"
               selectedSource={selectedSource}
+              width="100%"
+              height="100%"
             />
             <div className="flex gap-2 mb-4">
               <Select onValueChange={handleSourceChange} value={selectedSource}>

@@ -38,6 +38,7 @@ export default function RootLayout({
         <meta name="title" content="Superlist" />
         <meta name="theme-color" content="#0a0a0a" />
         <meta name="application-name" content="Superlist" />
+        <meta name="google-adsense-account" content="ca-pub-7360945644498149"></meta>
         <link rel="canonical" href="https://superlist.cc"></link>
         <link
           rel="apple-touch-icon"

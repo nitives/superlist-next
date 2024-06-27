@@ -36,7 +36,6 @@ export default function TVShows() {
               selectedSource={selectedSource}
               height="100%"
               width="100%"
-              Responsiveness
             />
             <div className="flex gap-2 mb-4">
               <Select onValueChange={handleSourceChange} value={selectedSource}>

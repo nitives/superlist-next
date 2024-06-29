@@ -160,7 +160,7 @@
     "categories": ["VFX", "Creative"],
     "description": "VHS Emulator.",
     "important": "",
-    "imageSrc": "/images/cache/captures/NTSCQ.gif",
+    "imageSrc": "/images/cache/captures/NTSCQ.jpg",
     "favicon": "/images/favicons/ntscq.ico",
     "link": "https://github.com/JargeZ/ntscqt/releases/tag/v1.5.0",
     "socialLinks": {

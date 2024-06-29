@@ -4,6 +4,7 @@ import "./globals.css";
 import { Footer, Navbar, SearchProvider, ThemeProvider } from "@/components";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,7 +39,7 @@ export default function RootLayout({
         <meta name="title" content="Superlist" />
         <meta name="theme-color" content="#0a0a0a" />
         <meta name="application-name" content="Superlist" />
-        <meta name="google-adsense-account" content="ca-pub-7360945644498149"></meta>
+        <meta name="google-adsense-account" content="ca-pub-7360945644498149" />
         <link rel="canonical" href="https://superlist.cc"></link>
         <link
           rel="apple-touch-icon"
@@ -87,6 +88,7 @@ export default function RootLayout({
       </body>
       <Analytics />
       <SpeedInsights />
+      <GoogleAnalytics gaId="G-2HMB0LN394" />
     </html>
   );
 }

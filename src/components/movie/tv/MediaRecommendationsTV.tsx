@@ -62,6 +62,7 @@ export default function MediaRecommendationsTV() {
                 src={PosterSrc + recommendation.poster_path}
                 alt={recommendation.name}
                 className="mb-2 border rounded-xl movie-card-image select-none"
+                unoptimized
               />
               <h3 className="text-lg font-bold">{recommendation.title}</h3>
               <div className="max-h-fit flex *:flex justify-between text-sm text-muted dark:text-muted-foreground gap-1 items-center">

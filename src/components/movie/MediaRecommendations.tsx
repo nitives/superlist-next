@@ -66,6 +66,7 @@ export default function MediaRecommendations() {
                 src={PosterSrc + recommendation.poster_path}
                 alt={recommendation.title}
                 className="mb-2 border rounded-xl movie-card-image select-none"
+                unoptimized
               />
               <div className="max-h-fit flex *:flex justify-between text-sm text-muted dark:text-muted-foreground gap-1 items-baseline">
                 <div className="w-auto max-w-[75%] ">

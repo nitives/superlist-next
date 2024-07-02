@@ -240,6 +240,7 @@ export default function Discover() {
                     alt={item.title || item.name || ""}
                     className="movie-card-image-main"
                     loading="lazy"
+                    unoptimized
                   />
                   <div className="movie-card-info">
                     <h2 className="movie-card-title">

@@ -21,7 +21,7 @@ export default function Movies() {
   return (
     <>
       <div className="p-4 lg:px-20 px-[0.3rem] pt-10">
-        <div className="grid gap-2">
+        <div className="flex flex-col gap-2">
           <div className="px-2 w-full flex flex-col items-center justify-center gap-10">
             <VideoPlayer
               className="aspect-video rounded-2xl max-h-[50rem] w-full flex video-player"

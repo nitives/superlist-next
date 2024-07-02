@@ -19,6 +19,8 @@ export default function MediaDetailsTV({
   const { id } = useParams();
   const [tv, setTV] = useState<any>(null);
   const [tvX, setTVX] = useState<any>(null);
+  const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
+  const [selectedEpisode, setSelectedEpisode] = useState<any>(null);
 
   useEffect(() => {
     const getTVDetails = async () => {
@@ -28,11 +30,16 @@ export default function MediaDetailsTV({
         const details = await FetchMoreDetailsTMDB(`${id}`, "tv");
         setTV(data);
         setTVX(details);
+
+        // Automatically select the first season
+        if (details?.seasons?.length > 0) {
+          setSelectedSeason(details.seasons[0].season);
+        }
       }
     };
 
     getTVDetails();
-  }, [id]);
+  }, [id, onEpisodeClick]);
 
   const { theme } = useTheme();
   const placeholderImage =
@@ -45,6 +52,17 @@ export default function MediaDetailsTV({
       document.title = "Superlist - " + tv.name;
     }
   });
+
+  const handleEpisodeClick = (episode: any) => {
+    setSelectedEpisode(episode);
+    onEpisodeClick(
+      `https://vidsrc.to/embed/tv/${id}/${selectedSeason}/${episode.episode}`
+    );
+  };
+
+  const handleSeasonChange = (season: number) => {
+    setSelectedSeason(season);
+  };
 
   if (!tv || !tvX) {
     return (
@@ -85,10 +103,6 @@ export default function MediaDetailsTV({
     );
   }
 
-  const handleEpisodeClick = (episodeUrl: string) => {
-    onEpisodeClick(episodeUrl);
-  };
-
   return (
     <>
       <Head>
@@ -120,7 +134,7 @@ export default function MediaDetailsTV({
           <div className="flex">
             <h1 className="text-4xl font-bold">{tv.name}</h1>
             {tv.adult !== false ? (
-              <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.42rem] pr-[.45rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
+              <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.42rem] pr/[.45rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
                 Adult
               </p>
             ) : null}
@@ -142,7 +156,8 @@ export default function MediaDetailsTV({
           </div>
           <p className="max-w-[40rem] text-muted-foreground">{tv.overview}</p>
           <Tabs
-            defaultValue={tvX.seasons[0]?.season?.toString()}
+            defaultValue={selectedSeason?.toString()}
+            onValueChange={(value) => handleSeasonChange(parseInt(value))}
             className="w-full mt-2"
           >
             <TabsList className="bg-muted/25 dark:bg-muted/100">
@@ -161,13 +176,14 @@ export default function MediaDetailsTV({
                   {season.episodes ? (
                     season.episodes.map((episode: any, index: number) => (
                       <button
-                        onClick={() =>
-                          handleEpisodeClick(
-                            `https://vidsrc.to/embed/tv/${id}/${season.season}/${episode.episode}`
-                          )
-                        }
+                        onClick={() => handleEpisodeClick(episode)}
                         key={index}
-                        className="bg-muted/25 dark:bg-muted/100 hover:bg-muted-foreground/40 py-1.5 rounded-md flex text-xs w-12 px-1 text-foreground items-center justify-center"
+                        className={`bg-muted/25 dark:bg-muted/100 hover:bg-muted-foreground/40 py-1.5 rounded-md flex text-xs w-12 px-1 text-foreground items-center justify-center ${
+                          selectedEpisode?.episode === episode.episode &&
+                          selectedSeason === season.season
+                            ? "bg-muted-foreground/40"
+                            : ""
+                        }`}
                       >
                         {episode.episode}
                       </button>
@@ -179,6 +195,14 @@ export default function MediaDetailsTV({
               </TabsContent>
             ))}
           </Tabs>
+          {selectedEpisode && (
+            <div className="mt-4 w-fit max-w-[30rem]">
+              <h2 className="text-2xl font-bold">{selectedEpisode.title}</h2>
+              <p className="text-sm text-muted dark:text-muted-foreground">
+                {selectedEpisode.description}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </>

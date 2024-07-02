@@ -125,6 +125,7 @@ export default function MediaDetailsTV({
             alt={tv.name}
             className="border rounded-2xl w-[35rem] lg:max-w-[400px] max-sm:w-[80rem] max-sm:max-w-[85vw] min-w-48 select-none"
             loading="lazy"
+            unoptimized
           />
         </div>
         <div className="max-w-[50rem] max-h-[50rem] pt-[5rem] max-sm:flex-col max-sm:pt-[0rem]">

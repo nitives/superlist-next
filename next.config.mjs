@@ -13,7 +13,6 @@ const nextConfig = {
     NEXT_PUBLIC_COMMIT_HASH: getCommitHash(),
   },
   images: {
-    domains: ["image.tmdb.org", "img.flixhq.to"],
     remotePatterns: [
       {
         protocol: "https",

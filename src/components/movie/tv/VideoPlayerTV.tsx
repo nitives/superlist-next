@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { Skeleton } from "../../ui/skeleton";
 
 export default function VideoPlayerTV({
@@ -15,6 +16,7 @@ export default function VideoPlayerTV({
   selectedSource: string;
 }) {
   const [isLoading, setIsLoading] = useState(true);
+  const { id } = useParams();
 
   useEffect(() => {
     setIsLoading(true); // Set loading state when episodeUrl changes
@@ -26,17 +28,25 @@ export default function VideoPlayerTV({
 
   const getSourceUrl = (url: string | null) => {
     if (!url) {
-      return "";
+      const baseUrl =
+        selectedSource === "vidsrc.pro"
+          ? "https://vidsrc.pro/embed/tv"
+          : selectedSource === "vidsrc.to"
+          ? "https://vidsrc.to/embed/tv"
+          : selectedSource === "vidsrc.icu"
+          ? "https://vidsrc.icu/embed/tv"
+          : "https://vidsrc.me/embed/tv";
+      return `${baseUrl}/${id}/1/1`;
     }
     const baseUrl =
-      selectedSource === "vidsrc"
-        ? "https://vidsrc.to/embed/tv"
-        : selectedSource === "vidsrc.pro"
+      selectedSource === "vidsrc.pro"
         ? "https://vidsrc.pro/embed/tv"
+        : selectedSource === "vidsrc.to"
+        ? "https://vidsrc.to/embed/tv"
         : selectedSource === "vidsrc.icu"
         ? "https://vidsrc.icu/embed/tv"
         : "https://vidsrc.me/embed/tv";
-    return url.replace(/https:\/\/vidsrc\.(to|pro|icu|me)\/embed\/tv/, baseUrl);
+    return url.replace(/https:\/\/vidsrc\.(pro|to|icu|me)\/embed\/tv/, baseUrl);
   };
 
   return (
@@ -46,18 +56,14 @@ export default function VideoPlayerTV({
           <Skeleton className="w-full aspect-video rounded-2xl px-2" />
         </div>
       )}
-      {episodeUrl && (
-        <iframe
-          className={`aspect-video rounded-2xl ${
-            isLoading ? "hidden" : "block"
-          }`}
-          src={getSourceUrl(episodeUrl)}
-          width={width}
-          height={height}
-          onLoad={handleLoad}
-          allowFullScreen
-        ></iframe>
-      )}
+      <iframe
+        className={`aspect-video rounded-2xl ${isLoading ? "hidden" : "block"}`}
+        src={getSourceUrl(episodeUrl)}
+        width={width}
+        height={height}
+        onLoad={handleLoad}
+        allowFullScreen
+      ></iframe>
     </div>
   );
 }

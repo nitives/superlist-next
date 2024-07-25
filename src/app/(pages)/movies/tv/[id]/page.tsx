@@ -15,7 +15,7 @@ export default function TVShows() {
   const [selectedEpisodeUrl, setSelectedEpisodeUrl] = useState<string | null>(
     null
   );
-  const [selectedSource, setSelectedSource] = useState<string>("vidsrc");
+  const [selectedSource, setSelectedSource] = useState<string>("vidsrc.pro");
 
   const handleEpisodeClick = (episodeUrl: string) => {
     setSelectedEpisodeUrl(episodeUrl);
@@ -43,8 +43,8 @@ export default function TVShows() {
                   <SelectValue placeholder="Source" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="vidsrc">vidsrc.to</SelectItem>
                   <SelectItem value="vidsrc.pro">vidsrc.pro</SelectItem>
+                  <SelectItem value="vidsrc.to">vidsrc.to</SelectItem>
                   <SelectItem value="vidsrc.icu">vidsrc.icu</SelectItem>
                   <SelectItem value="vidsrc.me">vidsrc.me</SelectItem>
                 </SelectContent>

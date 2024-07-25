@@ -19,10 +19,10 @@ export default function VideoPlayer({
 
   const getSourceUrl = (id: string) => {
     const baseUrl =
-      selectedSource === "vidsrc"
-        ? "https://vidsrc.to/embed/movie"
-        : selectedSource === "vidsrc.pro"
+      selectedSource === "vidsrc.pro"
         ? "https://vidsrc.pro/embed/movie"
+        : selectedSource === "vidsrc.pro"
+        ? "https://vidsrc.to/embed/movie"
         : selectedSource === "vidsrc.icu"
         ? "https://vidsrc.icu/embed/movie"
         : "https://vidsrc.me/embed/movie";

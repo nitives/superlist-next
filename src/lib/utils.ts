@@ -68,12 +68,32 @@ export async function FetchRecommendationsTMDB(id: string, type: string) {
 export async function FetchMoreDetailsTMDB(id: string, type: string) {
   try {
     const url = new URL(
-      `https://superlist-api-m.vercel.app/meta/tmdb/info/${id}?type=${type}?api_key=${TMDBkey}`
+      `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}?api_key=${TMDBkey}`
     );
     const response = await fetch(url.toString(), { cache: "no-cache" });
     if (!response.ok)
       throw new Error("FetchMoreDetailsTMDB | Failed to fetch data");
     const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log("Error:", error);
+  }
+}
+
+export async function FetchTVDetailsTMDB(
+  id: string,
+  season: string,
+  language?: string
+) {
+  try {
+    const url = new URL(
+      `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${TMDBkey}&language=${language}`
+    );
+    const response = await fetch(url.toString(), { cache: "no-cache" });
+    if (!response.ok)
+      throw new Error("FetchTVDetailsTMDB | Failed to fetch data");
+    const data = await response.json();
+    console.log("FetchTVDetailsTMDB data:", data);
     return data;
   } catch (error) {
     console.log("Error:", error);

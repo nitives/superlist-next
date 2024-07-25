@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useDraggable } from "react-use-draggable-scroll";
 
-export default function MediaPickerTV({
+export default function SeasonPicker({
   children,
   className,
 }: {
@@ -41,17 +41,17 @@ export default function MediaPickerTV({
       <div
         ref={ref}
         {...events}
-        className="flex w-[85%] max-sm:w-full space-x-3 overflow-x-scroll overflow-y-visible scrollbar-hide md:pl-[10px] md:pt-[10px] pl-[5px] pt-[5px]"
+        className="flex w-[85%] max-sm:w-full space-x-3 overflow-x-scroll scrollbar-hide"
       >
         {children}
       </div>
       <div
-        className={`h-[17rem] translate-y-[-245px] translate-x-[635px] max-sm:translate-x-[345px] w-12 pointer-events-none absolute bg-gradient-to-l to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%,1)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%,1)] from-30% ${
+        className={`right-fade h-[3rem] translate-y-[-45px] w-12 pointer-events-none absolute bg-gradient-to-l to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%)] from-10% right-[21rem] ${
           isScrolledToEnd ? "opacity-0" : "opacity-100"
         } transition-opacity duration-300`}
       />
       <div
-        className={`h-[17rem] translate-y-[-245px] max-sm:translate-x-[-1px] w-12 pointer-events-none absolute bg-gradient-to-r to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%,1)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%,1)] to-50% ${
+        className={`left-fade h-[3rem] translate-y-[-45px] w-12 pointer-events-none absolute bg-gradient-to-r to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsl(0,0%,4%)] to-50% ${
           isScrolledToStart ? "opacity-0" : "opacity-100"
         } transition-opacity duration-300`}
       />

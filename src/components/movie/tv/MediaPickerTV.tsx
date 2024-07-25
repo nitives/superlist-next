@@ -46,12 +46,12 @@ export default function MediaPickerTV({
         {children}
       </div>
       <div
-        className={`h-[17rem] translate-y-[-245px] translate-x-[635px] max-sm:translate-x-[345px] w-12 pointer-events-none absolute bg-gradient-to-l to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%,1)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%,1)] from-30% ${
+        className={`h-[17rem] max-sm:h-[13rem] max-sm:translate-y-[-195px] translate-y-[-245px] translate-x-[635px] max-sm:translate-x-[345px] w-12 pointer-events-none absolute bg-gradient-to-l to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%,1)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%,1)] from-30% ${
           isScrolledToEnd ? "opacity-0" : "opacity-100"
         } transition-opacity duration-300`}
       />
       <div
-        className={`h-[17rem] translate-y-[-245px] max-sm:translate-x-[-1px] w-12 pointer-events-none absolute bg-gradient-to-r to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%,1)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%,1)] to-50% ${
+        className={`h-[17rem] max-sm:h-[13rem] max-sm:translate-y-[-195px] translate-y-[-245px] max-sm:translate-x-[-1px] w-12 pointer-events-none absolute bg-gradient-to-r to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%,1)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%,1)] to-50% ${
           isScrolledToStart ? "opacity-0" : "opacity-100"
         } transition-opacity duration-300`}
       />

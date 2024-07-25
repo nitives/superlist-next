@@ -46,12 +46,12 @@ export default function SeasonPicker({
         {children}
       </div>
       <div
-        className={`right-fade h-[3rem] translate-y-[-45px] w-12 pointer-events-none absolute bg-gradient-to-l to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%)] from-10% right-[21rem] ${
+        className={`right-fade h-[3rem] translate-y-[-45px] translate-x-[635px] max-sm:translate-x-[345px] w-12 pointer-events-none absolute bg-gradient-to-l to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsla(0,0%,4%)] from-10% ${
           isScrolledToEnd ? "opacity-0" : "opacity-100"
         } transition-opacity duration-300`}
       />
       <div
-        className={`left-fade h-[3rem] translate-y-[-45px] w-12 pointer-events-none absolute bg-gradient-to-r to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsl(0,0%,4%)] to-50% ${
+        className={`left-fade h-[3rem] translate-y-[-45px] max-sm:translate-x-[-1px] w-12 pointer-events-none absolute bg-gradient-to-r to-[hsla(0,0%,98%,0.01)] from-[hsla(0,0%,98%)] dark:to-[hsla(0,0%,4%,0.01)] dark:from-[hsl(0,0%,4%)] to-50% ${
           isScrolledToStart ? "opacity-0" : "opacity-100"
         } transition-opacity duration-300`}
       />

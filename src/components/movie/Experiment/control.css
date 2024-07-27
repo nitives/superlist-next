@@ -115,7 +115,7 @@
 }
 
 @media (hover) {
-  .ui-video-seek-slider .track .main: hover:before {
+  .ui-video-seek-slider .track .main:hover:before {
     height: 4px;
   }
 

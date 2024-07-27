@@ -115,6 +115,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   &::selection {
+    /* background-color: var(--theme-x); */
     background-color: var(--selection-bg);
   }
 }
@@ -865,7 +866,7 @@ video {
     to bottom,
     hsla(227, 0%, 6%, 0) 0,
     hsla(227, 0%, 6%, 0.9) 100%
-  );                            
+  );
   color: white;
   padding: 10px;
   opacity: 1;

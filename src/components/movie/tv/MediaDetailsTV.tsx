@@ -34,7 +34,7 @@ import SeasonPicker from "./SeasonPicker";
 export default function MediaDetailsTV({
   onEpisodeClick,
 }: {
-  onEpisodeClick: (url: string) => void;
+  onEpisodeClick: (url: string, title: string) => void;
 }) {
   const { id } = useParams();
   const [tv, setTV] = useState<any>(null);
@@ -42,6 +42,8 @@ export default function MediaDetailsTV({
   const [stills, setTVStills] = useState<any>(null);
   const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<any>(null);
+
+  console.log("useEffect to getTVDetails | ID:", id);
 
   useEffect(() => {
     const getTVDetails = async () => {
@@ -54,15 +56,29 @@ export default function MediaDetailsTV({
         setTVX(details);
         setTVStills(imgdata);
 
-        // Automatically select the first season
-        if (details?.seasons?.length > 0) {
-          setSelectedSeason(details.seasons[0].season);
+        // Automatically select the first season and first episode
+        if (details.seasons.length > 0) {
+          const firstSeason = details?.seasons[0]?.season;
+          console.log("firstSeason", firstSeason);
+          setSelectedSeason(firstSeason);
+          const firstEpisode = details?.seasons[0]?.episodes[0].episode;
+          console.log("firstEpisode", firstEpisode);
+          setSelectedEpisode(firstEpisode);
+          onEpisodeClick(
+            `https://vidsrc.pro/embed/tv/${id}/${firstSeason}/${firstEpisode}`,
+            details?.seasons[0]?.episodes[0].title
+          );
+          console.log(
+            "onEpisodeClick - ",
+            `https://vidsrc.pro/embed/tv/${id}/${firstSeason}/${firstEpisode}`,
+            details?.seasons[0]?.episodes[0].title
+          );
         }
       }
     };
 
     getTVDetails();
-  }, [id, onEpisodeClick, selectedSeason]);
+  }, [id, selectedSeason]);
 
   const { theme } = useTheme();
   const placeholderImage =
@@ -79,7 +95,8 @@ export default function MediaDetailsTV({
   const handleEpisodeClick = (episode: any) => {
     setSelectedEpisode(episode);
     onEpisodeClick(
-      `https://vidsrc.pro/embed/tv/${id}/${selectedSeason}/${episode.episode}`
+      `https://vidsrc.pro/embed/tv/${id}/${selectedSeason}/${episode.episode}`,
+      episode.title
     );
   };
 
@@ -91,11 +108,11 @@ export default function MediaDetailsTV({
     console.log("tvX:", tvX);
   }
 
-  if (stills) {
-    console.log("FetchTVDetailsTMDB Path:", stills.episodes[0].still_path);
-    console.log("FetchTVDetailsTMDB:", stills);
-    console.log("FetchTVDetailsTMDB Selected Seasons:", selectedSeason);
-  }
+  // if (stills) {
+  //   console.log("FetchTVDetailsTMDB Path:", stills.episodes[0].still_path);
+  //   console.log("FetchTVDetailsTMDB:", stills);
+  //   console.log("FetchTVDetailsTMDB Selected Seasons:", selectedSeason);
+  // }
 
   if (!tv || !tvX) {
     return (
@@ -167,7 +184,7 @@ export default function MediaDetailsTV({
           <div className="flex">
             <h1 className="text-4xl font-bold">{tv.name}</h1>
             {tv.adult !== false ? (
-              <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl-[0.42rem] pr/[.45rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
+              <p className="select-none bg-foreground/[0.025] pt-[0.2rem] pb-[0.3rem] pl/[.45rem] leading-3 ml-1 border rounded-md flex text-xs size-fit items-center justify-center">
                 Adult
               </p>
             ) : null}
@@ -242,7 +259,7 @@ export default function MediaDetailsTV({
                 <MediaPickerTV className="bg-transparent">
                   {season.episodes ? (
                     season.episodes.map((episode: any, index: number) => (
-                      <>
+                      <div key={index}>
                         <button
                           aria-label={`${episode.episode} - ${episode.title}`}
                           onClick={() => handleEpisodeClick(episode)}
@@ -251,7 +268,7 @@ export default function MediaDetailsTV({
                         >
                           <div className="flex flex-col items-start max-sm:w-full">
                             <div className="overlay-outline-container hover:scale-[1.02] transition-all ease duration-300 bg-[#0f0f0f] rounded-2xl">
-                              <Image
+                              {/* <Image
                                 draggable={false}
                                 width={330}
                                 height={600}
@@ -280,6 +297,32 @@ export default function MediaDetailsTV({
                                 }`}
                                 loading="eager"
                                 unoptimized
+                              /> */}
+                              <Image
+                                draggable={false}
+                                width={330}
+                                height={600}
+                                placeholder={`data:image/${placeholderImage}`}
+                                src={
+                                  episode.img
+                                    ? `https://image.tmdb.org/t/p/w500${episode.img.hd}`
+                                    : `data:image/${placeholderImage}`
+                                }
+                                alt={tv.name}
+                                title={`${episode.episode} - ${episode.title}`}
+                                className={`rounded-2xl w-[20rem] min-w-[20rem] max-sm:w-[15rem] max-sm:min-w-[15rem] justify-start select-none aspect-video album-cover-img outline-[2px] outline outline-foreground/0 outline-offset-2 ${
+                                  selectedEpisode?.episode ===
+                                    episode.episode &&
+                                  selectedSeason === season.season
+                                    ? "outline dark:!outline-foreground/15 !outline-[#0a0a0a]/15 outline-offset-2"
+                                    : ""
+                                } ${
+                                  episode?.img?.hd
+                                    ? "object-cover"
+                                    : "object-contain"
+                                }`}
+                                loading="eager"
+                                unoptimized
                               />
                               <div className="img-border rounded-2xl" />
                             </div>
@@ -289,7 +332,6 @@ export default function MediaDetailsTV({
                               className="text-xs text-muted-foreground text-left"
                               title={`Season ${selectedSeason}, Episode ${episode.episode}`}
                             >
-                              {/* {`S${selectedSeason}, E${episode.episode}`} */}
                               {`EPISODE ${episode.episode}`}
                             </p>
                             <p className="text-sm text-left">{episode.title}</p>
@@ -307,9 +349,7 @@ export default function MediaDetailsTV({
                             </HoverCard>
                           </div>
                         </button>
-                        {/* <p>{episode.description}</p> */}
-                        {/* <p>{season.season}</p> */}
-                      </>
+                      </div>
                     ))
                   ) : (
                     <p>No episodes available.</p>
@@ -318,14 +358,6 @@ export default function MediaDetailsTV({
               </TabsContent>
             ))}
           </Tabs>
-          {/* {selectedEpisode && (
-            <div className="mt-4 w-fit max-w-[30rem]">
-              <h2 className="text-2xl font-bold">{selectedEpisode.title}</h2>
-              <p className="text-sm text-muted dark:text-muted-foreground">
-                {selectedEpisode.description}
-              </p>
-            </div>
-          )} */}
         </div>
       </div>
     </>

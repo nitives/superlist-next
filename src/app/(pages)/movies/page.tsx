@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/customui/Button";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -18,6 +19,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { LucideSettings2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SearchContext } from "@/components/SearchContext";
@@ -33,6 +45,18 @@ interface Media {
   release_date?: string;
   first_air_date?: string;
   type: string;
+}
+
+interface ContinueWatchingItem {
+  id: string;
+  type: string;
+  title: string;
+  poster_path: string;
+  currentTime: number;
+  duration: number;
+  seasonNumber?: string;
+  episodeNumber?: string;
+  episodeTitle?: string;
 }
 
 export default function Discover() {
@@ -83,6 +107,45 @@ export default function Discover() {
     }
   };
 
+  const fetchContinueWatching = (): ContinueWatchingItem[] => {
+    const items: ContinueWatchingItem[] = [];
+    console.log("Fetching continue watching items from localStorage...");
+    console.log("Current Items:", localStorage);
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("videoTime-")) {
+        const id = key.replace("videoTime-", "").split("-")[0]; // Extract the id part
+        const currentTime = parseFloat(localStorage.getItem(key) || "0");
+        if (currentTime > 30) {
+          const type = localStorage.getItem(`videoType-${id}`) || "";
+          const title = localStorage.getItem(`videoTitle-${id}`) || "";
+          const poster_path = localStorage.getItem(`videoPoster-${id}`) || "";
+          const duration = parseFloat(
+            localStorage.getItem(`videoDuration-${id}`) || "0"
+          );
+          const seasonNumber = localStorage.getItem(`videoSeason-${id}`) || "";
+          const episodeNumber =
+            localStorage.getItem(`videoEpisode-${id}`) || "";
+          const episodeTitle =
+            localStorage.getItem(`videoEpisodeTitle-${id}`) || "";
+          items.push({
+            id,
+            type,
+            title,
+            poster_path,
+            currentTime,
+            duration,
+            seasonNumber,
+            episodeNumber,
+            episodeTitle,
+          });
+        }
+      }
+    }
+    console.log("Fetched items:", items);
+    return items;
+  };
+
   useEffect(() => {
     fetchMedia(1, filters, mediaType);
   }, [filters, mediaType, searchQuery]);
@@ -106,8 +169,105 @@ export default function Discover() {
     }));
   };
 
+  const continueWatchingItems = fetchContinueWatching();
+  console.log("continueWatchingItems:", continueWatchingItems);
+
+  const calculatePercentageWatched = (
+    currentTime: number,
+    duration: number
+  ) => {
+    if (duration === 0) return 0;
+    return (currentTime / duration) * 100;
+  };
+
+  const handleClearLocalStorage = () => {
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("video")) {
+        localStorage.removeItem(key);
+      }
+    });
+  };
+
   return (
     <main className="p-2 pt-10">
+      <div>
+        {continueWatchingItems.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xl font-bold mb-4">Continue Watching</h2>
+            <div className="continue-grid">
+              {continueWatchingItems.map((item) => (
+                <div key={item.id}>
+                  <Link href={`movies/${item.type}/${item.id}`}>
+                    <div className="continue-card">
+                      <Image
+                        width={200}
+                        height={300}
+                        src={
+                          item.poster_path
+                            ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+                            : "/public/images/bg-dark-texture1.png"
+                        }
+                        alt={item.title || item.name || ""}
+                        className="continue-card-image-main"
+                        loading="lazy"
+                        unoptimized
+                      />
+                      <div className="continue-card-info">
+                        {item.type === "tv" && (
+                          <p className="text-xs text-white text-left drop-shadow-lg">
+                            {`S${item.seasonNumber}, E${item.episodeNumber}`} ·
+                            {""}
+                            {` ${item.episodeTitle} `}
+                          </p>
+                        )}
+                        <p className="text-left pb-1 drop-shadow-lg">{item.title}</p>
+                        <Progress
+                          value={calculatePercentageWatched(
+                            item.currentTime,
+                            item.duration
+                          )}
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full flex flex-col items-start pt-1"></div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+            <div className="pt-2">
+              <AlertDialog>
+                <AlertDialogTrigger>
+                  <span className="w-full bg-muted/50 active:bg-card hover:muted/20 cursor-pointer px-2 py-1 text-sm rounded-[14px]">
+                    Delete Local Movie Data
+                  </span>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="!rounded-[14px]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      local data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="!rounded-[14px]">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleClearLocalStorage}
+                      className="!rounded-[14px]"
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        )}
+      </div>
       <div className="flex max-sm:justify-between justify-end gap-2 mb-4 max-sm:h-[50%]">
         <Popover>
           <PopoverTrigger className="flex h-10 py-2 px-4 text-sm max-sm:h-8 max-sm:py-1 max-sm:px-2 max-sm:text-xs items-center justify-between rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-fit">

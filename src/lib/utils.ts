@@ -87,7 +87,7 @@ export async function FetchTVDetailsTMDB(
 ) {
   try {
     const url = new URL(
-      `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${TMDBkey}&language=${language}`
+      `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${TMDBkey}`
     );
     const response = await fetch(url.toString(), { cache: "no-cache" });
     if (!response.ok)

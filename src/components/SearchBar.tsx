@@ -26,8 +26,8 @@ export const SearchBar = () => {
           </kbd>
         </div>
         <div className="sm:hidden block">
-          <FaSearch className="fill-[#fafafa]" />
-        </div>  
+          <FaSearch className="fill-foreground" />
+        </div>
       </DialogTrigger>
       <DialogContent className="flex items-center bg-background/50 backdrop-blur-md p-2 !rounded-[1rem] search-con pl-5 gap-1">
         <FaSearch className="fill-[#fafafa]" />

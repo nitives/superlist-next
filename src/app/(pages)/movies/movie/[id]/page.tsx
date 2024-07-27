@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import VideoPlayerExperimental from "@/components/movie/Experiment/VideoPlayerExperimental";
 
 export default function Movies() {
   const [selectedSource, setSelectedSource] = useState<string>("vidsrc.pro");
@@ -23,6 +24,7 @@ export default function Movies() {
       <div className="p-4 lg:px-20 px-[0.3rem] pt-10">
         <div className="flex flex-col gap-2">
           <div className="px-2 w-full flex flex-col items-center justify-center gap-10">
+            <VideoPlayerExperimental className="aspect-video rounded-2xl max-h-[50rem] w-full flex video-player" src={selectedSource} />
             <VideoPlayer
               className="aspect-video rounded-2xl max-h-[50rem] w-full flex video-player"
               selectedSource={selectedSource}

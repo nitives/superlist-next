@@ -641,8 +641,8 @@ div {
 }
 
 .video-player {
-  max-height: fit-content;
-  max-width: 76rem;
+  /* max-height: fit-content;
+  max-width: 76rem; */
   font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
   &:-moz-focusring {

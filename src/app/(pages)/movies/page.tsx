@@ -110,40 +110,42 @@ export default function Discover() {
 
   const fetchContinueWatching = (): ContinueWatchingItem[] => {
     const items: ContinueWatchingItem[] = [];
-    console.log("Fetching continue watching items from localStorage...");
-    console.log("Current Items:", localStorage);
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith("videoTime-")) {
-        const id = key.replace("videoTime-", "").split("-")[0]; // Extract the id part
-        const currentTime = parseFloat(localStorage.getItem(key) || "0");
-        if (currentTime > 30) {
-          const type = localStorage.getItem(`videoType-${id}`) || "";
-          const title = localStorage.getItem(`videoTitle-${id}`) || "";
-          const poster_path = localStorage.getItem(`videoPoster-${id}`) || "";
-          const duration = parseFloat(
-            localStorage.getItem(`videoDuration-${id}`) || "0"
-          );
-          const seasonNumber = localStorage.getItem(`videoSeason-${id}`) || "";
-          const episodeNumber =
-            localStorage.getItem(`videoEpisode-${id}`) || "";
-          const episodeTitle =
-            localStorage.getItem(`videoEpisodeTitle-${id}`) || "";
-          items.push({
-            id,
-            type,
-            title,
-            poster_path,
-            currentTime,
-            duration,
-            seasonNumber,
-            episodeNumber,
-            episodeTitle,
-          });
+    if (typeof window !== "undefined") {
+      console.log("Fetching continue watching items from localStorage...");
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith("videoTime-")) {
+          const id = key.replace("videoTime-", "").split("-")[0]; // Extract the id part
+          const currentTime = parseFloat(localStorage.getItem(key) || "0");
+          if (currentTime > 30) {
+            const type = localStorage.getItem(`videoType-${id}`) || "";
+            const title = localStorage.getItem(`videoTitle-${id}`) || "";
+            const poster_path = localStorage.getItem(`videoPoster-${id}`) || "";
+            const duration = parseFloat(
+              localStorage.getItem(`videoDuration-${id}`) || "0"
+            );
+            const seasonNumber =
+              localStorage.getItem(`videoSeason-${id}`) || "";
+            const episodeNumber =
+              localStorage.getItem(`videoEpisode-${id}`) || "";
+            const episodeTitle =
+              localStorage.getItem(`videoEpisodeTitle-${id}`) || "";
+            items.push({
+              id,
+              type,
+              title,
+              poster_path,
+              currentTime,
+              duration,
+              seasonNumber,
+              episodeNumber,
+              episodeTitle,
+            });
+          }
         }
       }
+      console.log("Fetched items:", items);
     }
-    console.log("Fetched items:", items);
     return items;
   };
 

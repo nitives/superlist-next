@@ -51,6 +51,7 @@ interface ContinueWatchingItem {
   id: string;
   type: string;
   title: string;
+  name?: string;
   poster_path: string;
   currentTime: number;
   duration: number;
@@ -220,7 +221,9 @@ export default function Discover() {
                             {` ${item.episodeTitle} `}
                           </p>
                         )}
-                        <p className="text-left pb-1 drop-shadow-lg">{item.title}</p>
+                        <p className="text-left pb-1 drop-shadow-lg">
+                          {item.title}
+                        </p>
                         <Progress
                           value={calculatePercentageWatched(
                             item.currentTime,

@@ -39,7 +39,7 @@ export const Controls = ({
   videoDuration: number;
   bufferTime: number;
   playing: boolean;
-  toggleFullscreen: () => void;
+  toggleFullscreen?: () => void;
   volume: number;
   setVolume: (value: number) => void;
 }) => {
@@ -81,12 +81,14 @@ export const Controls = ({
     if (visible) {
       clearTimeout(timerRef.current);
     } else {
-      timerRef.current = setTimeout(() => setVisible(false), hoverTimeOut);
+      timerRef.current = window.setTimeout(
+        () => setVisible(false),
+        hoverTimeOut
+      );
     }
 
     return () => clearTimeout(timerRef.current);
-  }, [visible]);
-
+  }, [visible, hoverTimeOut]);
   useEffect(() => {
     if (isIdle) {
       setVisible(false);
@@ -98,11 +100,14 @@ export const Controls = ({
     clearTimeout(timerRef.current);
     clearTimeout(idleTimerRef.current);
     setIsIdle(false);
-    idleTimerRef.current = setTimeout(() => setIsIdle(true), hoverTimeOut);
+    idleTimerRef.current = window.setTimeout(
+      () => setIsIdle(true),
+      hoverTimeOut
+    );
   };
 
   const handleMouseLeave = () => {
-    timerRef.current = setTimeout(() => setVisible(false), hoverTimeOut);
+    timerRef.current = window.setTimeout(() => setVisible(false), hoverTimeOut);
   };
 
   const handleVolumeChange = (event: ChangeEvent<HTMLInputElement>) => {

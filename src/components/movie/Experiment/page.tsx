@@ -17,12 +17,12 @@ export default function MoviesTest({
   className?: string;
   type: string;
   id: any;
-  episodeNumber: any;
-  seasonNumber: any;
-  episodeTitle: any;
+  episodeNumber?: any;
+  seasonNumber?: any;
+  episodeTitle?: any;
 }) {
   const videoPlayerRef = useRef<ReactPlayer | null>(null);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string>("");
   const [media, setMediaData] = useState<any | null>(null);
   const [initialTimeSet, setInitialTimeSet] = useState<boolean>(false);
   const [savedTime, setSavedTime] = useState<number>(0);
@@ -122,10 +122,10 @@ export default function MoviesTest({
             currentTime.toString()
           );
           localStorage.setItem(`videoType-${id}`, type);
-          if (media.title) {
+          if (media?.title) {
             localStorage.setItem(`videoTitle-${id}`, media.title);
           }
-          if (media.cover) {
+          if (media?.cover) {
             localStorage.setItem(`videoPoster-${id}`, media.cover);
           }
           if (duration > 0) {
@@ -158,8 +158,6 @@ export default function MoviesTest({
     media?.cover,
   ]);
 
-  // console.log("LOCAL ALL", media?.cover, media?.title, duration.toString());
-
   const playPauseHandler = () => {
     setVideoState({ ...videoState, playing: !videoState.playing });
   };
@@ -187,12 +185,6 @@ export default function MoviesTest({
     }, 7000);
   };
 
-  const toggleFullscreen = () => {
-    if (videoPlayerRef.current && screenfull.isEnabled) {
-      screenfull.request(videoPlayerRef.current.wrapper);
-    }
-  };
-
   return (
     <div className={cn(className, "relative")} suppressHydrationWarning={true}>
       <Controls
@@ -206,10 +198,9 @@ export default function MoviesTest({
         currentTime={currentTime}
         bufferTime={bufferTime}
         playing={playing}
-        toggleFullscreen={toggleFullscreen}
         volume={volume}
         setVolume={volumeHandler}
-        timeOut={1.5} // Seconds
+        timeOut={1.5}
       >
         <ReactPlayer
           className="min-h-full min-w-screen video-player"

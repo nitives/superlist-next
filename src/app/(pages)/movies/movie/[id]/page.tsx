@@ -72,7 +72,9 @@ export default function Movies() {
               />
             )}
             <div className="flex gap-2 mb-4 flex-col justify-center items-center">
-              <p className="text-xs select-none text-muted-foreground">Players</p>
+              <p className="text-xs select-none text-muted-foreground">
+                Players
+              </p>
               <Select onValueChange={handleSourceChange} value={selectedSource}>
                 <SelectTrigger className="w-[18rem] rounded-xl">
                   <SelectValue placeholder="Source" />

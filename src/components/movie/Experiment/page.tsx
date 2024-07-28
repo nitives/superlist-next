@@ -3,7 +3,6 @@ import { Controls } from "@/components/movie/Experiment/Controls";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
-import screenfull from "screenfull";
 import { useFullScreenHandle } from "react-full-screen";
 
 export default function MoviesTest({
@@ -31,7 +30,14 @@ export default function MoviesTest({
   const getInitialVolume = () => {
     if (typeof window !== "undefined") {
       const savedVolume = localStorage.getItem("videoVolume");
-      return savedVolume ? parseFloat(savedVolume) : 0.5;
+      if (savedVolume !== null) {
+        const parsedVolume = parseFloat(savedVolume);
+        document.documentElement.style.setProperty(
+          "--seek-value",
+          `${parsedVolume * 100}%`
+        );
+        return parsedVolume;
+      }
     }
     return 0.5;
   };

@@ -111,7 +111,7 @@ export default function MoviesTest({
     }
   }, [savedTime, duration, currentTimePercentage]);
 
-  console.log("media", media);
+  // console.log("media", media);
 
   useEffect(() => {
     const saveCurrentTime = () => {

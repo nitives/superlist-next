@@ -13,7 +13,7 @@ import {
 import toast, { ToastBar, Toaster } from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
-import MoviesTest from "@/components/movie/Experiment/page";
+import MoviesTest from "@/components/movie/Experiment/MoviesTest";
 import { useParams } from "next/navigation";
 import { FetchMoreDetailsTMDB } from "@/lib/utils";
 

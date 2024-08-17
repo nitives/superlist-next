@@ -61,38 +61,38 @@ export default function MoviesTest({
 
   const handle = useFullScreenHandle();
 
-  const fetchVideoUrl = async () => {
-    try {
-      const response = await fetch(
-        `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
-      );
-      const data = await response.json();
-      setMediaData(data);
-      const imdbId = data.mappings.imdb;
-      if (imdbId) {
-        const videoUrl =
-          type === "tv"
-            ? `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}?ss=${seasonNumber}&ep=${episodeNumber}`
-            : `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}`;
-
-        const videoResponse = await fetch(videoUrl);
-        const videoData = await videoResponse.json();
-        const txtFileUrl = videoData?.videoSource;
-        if (txtFileUrl) {
-          const txtResponse = await fetch(txtFileUrl);
-          const txtData = await txtResponse.text();
-          const videoLinkMatch = txtData.match(/https:\/\/[^\s]+/);
-          if (videoLinkMatch) {
-            setVideoUrl(videoLinkMatch[0]);
+  useEffect(() => {
+    const fetchVideoUrl = async () => {
+      try {
+        const response = await fetch(
+          `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
+        );
+        const data = await response.json();
+        setMediaData(data);
+        const imdbId = data.mappings.imdb;
+        if (imdbId) {
+          const videoUrl =
+            type === "tv"
+              ? `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}?ss=${seasonNumber}&ep=${episodeNumber}`
+              : `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}`;
+          console.log("videoUrl", videoUrl);
+          const videoResponse = await fetch(videoUrl);
+          const videoData = await videoResponse.json();
+          const txtFileUrl = videoData?.videoSource;
+          if (txtFileUrl) {
+            const txtResponse = await fetch(txtFileUrl);
+            const txtData = await txtResponse.text();
+            const videoLinkMatch = txtData.match(/https:\/\/[^\s]+/);
+            if (videoLinkMatch) {
+              setVideoUrl(videoLinkMatch[0]);
+            }
           }
         }
+      } catch (error) {
+        console.error("Error fetching video URL:", error);
       }
-    } catch (error) {
-      console.error("Error fetching video URL:", error);
-    }
-  };
+    };
 
-  useEffect(() => {
     fetchVideoUrl();
   }, [id, type, seasonNumber, episodeNumber]);
 

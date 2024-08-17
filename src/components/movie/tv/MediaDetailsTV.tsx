@@ -78,7 +78,7 @@ export default function MediaDetailsTV({
     };
 
     getTVDetails();
-  }, [id, selectedSeason]);
+  }, [id]);
 
   const { theme } = useTheme();
   const placeholderImage =

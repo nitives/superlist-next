@@ -36,7 +36,7 @@ export default function SeasonPicker({
 
   return (
     <div
-      className={`${className} w-full h-auto gap-2 items-center justify-center`}
+      className={`${className} w-full h-auto gap-2 items-center justify-center season-fade`}
     >
       <div
         ref={ref}

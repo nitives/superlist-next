@@ -68,7 +68,7 @@ export async function FetchRecommendationsTMDB(id: string, type: string) {
 export async function FetchMoreDetailsTMDB(id: string, type: string) {
   try {
     const url = new URL(
-      `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}?api_key=${TMDBkey}`
+      `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
     );
     const response = await fetch(url.toString(), { cache: "no-cache" });
     if (!response.ok)

@@ -69,20 +69,28 @@ export default function MoviesTest({
         );
         const data = await response.json();
         setMediaData(data);
+        console.log("MOVIETEST | data:", data);
         const imdbId = data.mappings.imdb;
+        console.log("MOVIETEST | imdbId:", imdbId);
         if (imdbId) {
           const videoUrl =
             type === "tv"
               ? `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}?ss=${seasonNumber}&ep=${episodeNumber}`
               : `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}`;
-          console.log("videoUrl", videoUrl);
+          console.log("MOVIETEST | videoUrl:", videoUrl);
           const videoResponse = await fetch(videoUrl);
+          console.log("MOVIETEST | videoResponse:", videoResponse);
           const videoData = await videoResponse.json();
+          console.log("MOVIETEST | videoData:", videoData);
           const txtFileUrl = videoData?.videoSource;
+          console.log("MOVIETEST | txtFileUrl:", txtFileUrl);
           if (txtFileUrl) {
             const txtResponse = await fetch(txtFileUrl);
+            console.log("MOVIETEST | txtResponse:", txtResponse);
             const txtData = await txtResponse.text();
+            console.log("MOVIETEST | txtData:", txtData);
             const videoLinkMatch = txtData.match(/https:\/\/[^\s]+/);
+            console.log("MOVIETEST | txtData:", txtData);
             if (videoLinkMatch) {
               setVideoUrl(videoLinkMatch[0]);
             }

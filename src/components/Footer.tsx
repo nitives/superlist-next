@@ -14,7 +14,7 @@ export const Footer = ({ className }: { className: string }) => {
             <p>Navigation</p>
           </div>
           <div className="footer-links">
-            <a href="/og" className="">
+            <a href="/archive/og/index.html" className="">
               OG
             </a>
           </div>

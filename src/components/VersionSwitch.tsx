@@ -38,8 +38,8 @@ export const VersionSwitch = () => {
             <div className="p-1">
               {[
                 { version: "v4.0", link: "/" },
-                { version: "v3.4", link: "/archive/v3.4" },
-                { version: "OG", link: "/archive/OG" },
+                { version: "v3.7", link: "/archive/v3.7/index.html" },
+                { version: "OG", link: "/archive/og/index.html" },
               ].map(({ version, link }) => (
                 <MenuItem key={version}>
                   <a

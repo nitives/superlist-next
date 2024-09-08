@@ -103,7 +103,7 @@ export default function Home() {
     <main className="p-2">
       <div className="w-full mx-auto my-0 ">
         <div className="mt-10 my-5 items-center flex-col flex ">
-          <Pill href="./" className="">
+          <Pill href="/archive/v3.7/index.html" className="">
             <p>Superlist 3.7</p>
           </Pill>
           <motion.div

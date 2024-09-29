@@ -15,6 +15,8 @@ import { useParams } from "next/navigation";
 import toast, { ToastBar, Toaster } from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
+import Head from "next/head";
+import { FetchDetailsTMDB } from "@/lib/utils";
 
 const notify = () =>
   toast(
@@ -36,6 +38,11 @@ export default function Movies() {
   const { id } = useParams();
   const [selectedSource, setSelectedSource] = useState<string>("superlist");
   const [toastShown, setToastShown] = useState<boolean>(false);
+  const [movie, setMovie] = useState<{
+    title: string;
+    poster_path: string;
+    overview: string;
+  } | null>(null);
 
   const handleSourceChange = (value: string) => {
     setSelectedSource(value);
@@ -53,8 +60,86 @@ export default function Movies() {
     }
   }, [selectedSource, toastShown]);
 
+  useEffect(() => {
+    const getMovieDetails = async () => {
+      if (id) {
+        await new Promise((resolve) => setTimeout(resolve, 50)); // 50ms wait
+        const data = await FetchDetailsTMDB(`${id}`, "movie");
+        console.log("Dynamic Data", data);
+        document.title = `Superlist - ${data.title}`;
+        const metaDescription = document.querySelector(
+          "meta[name='description']"
+        );
+        if (metaDescription) {
+          metaDescription.setAttribute(
+            "content",
+            `Superlist | ${data.title} | ${data.overview}`
+          );
+        }
+
+        const metaOgTitle = document.querySelector("meta[property='og:title']");
+        if (metaOgTitle) {
+          metaOgTitle.setAttribute("content", `Superlist - ${data.title}`);
+        }
+
+        const metaOgDescription = document.querySelector(
+          "meta[property='og:description']"
+        );
+        if (metaOgDescription) {
+          metaOgDescription.setAttribute(
+            "content",
+            `Superlist | ${data.title} | ${data.overview}`
+          );
+        }
+
+        const metaOgImage = document.querySelector("meta[property='og:image']");
+        if (metaOgImage) {
+          metaOgImage.setAttribute(
+            "content",
+            `https://image.tmdb.org/t/p/w500${data.poster_path}` ||
+              "/images/meta/meta-image.png"
+          );
+        }
+        setMovie(data);
+      }
+    };
+    getMovieDetails();
+  }, [id]);
+
   return (
     <>
+      <Head>
+        <title>{`SuperlistXX - ${movie?.title}` || "Superlist"}</title>
+        <meta
+          name="description"
+          content={
+            `Superlist | ${movie?.title} | ${movie?.overview}` ||
+            "Superlist Movies"
+          }
+        />
+        <meta
+          property="og:title"
+          content={`Superlist - ${movie?.title}` || "Superlist"}
+        />
+        <meta
+          property="og:description"
+          content={
+            `Superlist | ${movie?.title} | ${movie?.overview}` ||
+            "Superlist Movies"
+          }
+        />
+        <meta
+          property="og:image"
+          content={
+            `https://image.tmdb.org/t/p/w500${movie?.poster_path}` ||
+            "/images/meta/meta-image.png"
+          }
+        />
+        <meta
+          property="og:url"
+          content={`https://superlist.cc/movies/movie/${id}`}
+        />
+      </Head>
       <div
         className="p-4 lg:px-20 px-[0.3rem] pt-10"
         suppressHydrationWarning={true}

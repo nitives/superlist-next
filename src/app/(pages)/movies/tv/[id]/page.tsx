@@ -41,6 +41,7 @@ export default function TVShows() {
   const [selectedSource, setSelectedSource] = useState<string>("superlist");
   const [toastShown, setToastShown] = useState<boolean>(false);
   const [episodeTitle, setEpisodeTitle] = useState<string>("----");
+  const [episodeData, setEpisodeData] = useState<any>(null);
 
   useEffect(() => {
     const getTVDetails = async () => {
@@ -51,6 +52,7 @@ export default function TVShows() {
         //   "getTVDetails - 50",
         //   data.seasons[seasonNumber - 1].episodes[episodeNumber - 1].title
         // );
+        setEpisodeData(data);
         const firstEpisodeTitle = data.seasons[0].episodes[0].title;
         setEpisodeTitle(firstEpisodeTitle);
       }

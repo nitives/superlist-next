@@ -1,6 +1,6 @@
 "use client";
 import { Controls } from "@/components/movie/Experiment/Controls";
-import { cn } from "@/lib/utils";
+import { cn, FetchDetailsTMDB, FetchMoreDetailsTMDB } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { useFullScreenHandle } from "react-full-screen";
@@ -66,44 +66,138 @@ export default function MoviesTest({
 
   const handle = useFullScreenHandle();
 
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, options);
+  };
+
+  const setMediaSessionMetadata = (media: any) => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: media.title || "Unknown Title",
+        artist: media.ex.production_companies[0].name || "Unknown Publisher",
+        artwork: [
+          {
+            src:
+              media.image ||
+              `https://image.tmdb.org/t/p/w500${media.ex.poster_path}`,
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (playing && media) {
+      setMediaSessionMetadata(media);
+      console.log(
+        "MOVIETEST | setMediaSessionMetadata:",
+        media.title,
+        media.image,
+        media.ex.production_companies[0].name,
+        formatDate(media.releaseDate)
+      );
+    }
+  }, [media, playing]);
+
   useEffect(() => {
     const fetchVideoUrlAlt = async () => {
       try {
         const response = await fetch(
           `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
         );
-        const data = await response.json();
-        console.log("MOVIETEST | id:", id);
+        const extraData = await FetchDetailsTMDB(`${id}`, type);
+        const superlistData = await response.json();
+        const data = {
+          ...superlistData,
+          ex: extraData,
+        };
         setMediaData(data);
-        console.log("MOVIETEST | data:", data);
+        setMediaSessionMetadata(data);
+        const provider = "soaper"; // soaper, warezcdn, frembed, autoembed, faselhd
         if (id) {
           const videoUrl =
             type === "tv"
-              ? `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/${id}?ss=${seasonNumber}&ep=${episodeNumber}`
-              : `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/${id}`;
-          console.log("MOVIETEST | videoUrl:", videoUrl);
+              ? `https://vidjoy.vidsrcproxy.workers.dev/fetch/${provider}/${id}?ss=${seasonNumber}&ep=${episodeNumber}`
+              : `https://vidjoy.vidsrcproxy.workers.dev/fetch/${provider}/${id}`;
           const videoResponse = await fetch(videoUrl);
-          console.log("MOVIETEST | videoResponse:", videoResponse);
 
           if (videoResponse.status === 500) {
-            console.error(
-              "File is unavailable for this player. Please switch to another player."
-            );
-            toast(
-              <div className="flex items-center gap-3">
-                <IoWarning className="text-[#f8102f]" size={24} />
-                <span className="text-left w-full">
-                  <p className="select-none text-muted-foreground">
-                    <b className="text-[#f8102f]">Error</b> File is unavailable
-                    for this player. Please switch to another player.
-                  </p>
-                </span>
-              </div>,
-              {
-                id: "playerissue",
+            const providers = ["soaper", "warezcdn", "frembed", "faselhd"];
+            let validVideoUrl = null;
+            for (const provider of providers) {
+              const videoUrl =
+                type === "tv"
+                  ? `https://vidjoy.vidsrcproxy.workers.dev/fetch/${provider}/${id}?ss=${seasonNumber}&ep=${episodeNumber}`
+                  : `https://vidjoy.vidsrcproxy.workers.dev/fetch/${provider}/${id}`;
+
+              const videoResponse = await fetch(videoUrl);
+              if (videoResponse.status !== 500) {
+                validVideoUrl = videoUrl;
+                break;
               }
-            );
-            return;
+            }
+
+            if (!validVideoUrl) {
+              console.error(
+                "File is unavailable for all providers. Please switch to another player."
+              );
+              toast(
+                <div className="flex items-center gap-3">
+                  <IoWarning className="text-[#f8102f]" size={24} />
+                  <span className="text-left w-full">
+                    <p className="select-none text-muted-foreground">
+                      <b className="text-[#f8102f]">Error</b> File is
+                      unavailable for all providers. Please switch to another
+                      player.
+                    </p>
+                  </span>
+                </div>,
+                {
+                  id: "playerissue",
+                }
+              );
+              return;
+            }
+
+            const videoData = await (await fetch(validVideoUrl)).json();
+            console.log("MOVIETEST | videoData:", videoData);
+            const videoFile = videoData?.url;
+            console.log("MOVIETEST | videoFile:", videoFile);
+            if (videoFile[0].link) {
+              setVideoUrl(videoFile[0].link);
+            }
+            if (videoData.tracks) {
+              const languageMap: { [key: string]: string } = {
+                en: "English",
+                es: "Español",
+                fr: "Français",
+                it: "Italiano",
+                de: "Deutsch",
+                pt: "Português",
+                nl: "Dutch",
+                th: "ภาษาไทย",
+                zh: "中文",
+              };
+              const formattedTracks = videoData.tracks
+                .filter((track: any) => track.url !== undefined)
+                .map((track: any) => ({
+                  kind: "captions",
+                  src: track.url,
+                  srcLang: track.srcLang,
+                  label: track.lang,
+                  default: track.default,
+                }));
+              console.log("MOVIETEST | formattedTracks:", formattedTracks);
+              setTracks(formattedTracks);
+            }
           }
 
           const videoData = await videoResponse.json();
@@ -114,14 +208,29 @@ export default function MoviesTest({
             setVideoUrl(videoFile[0].link);
           }
           if (videoData.tracks) {
-            const formattedTracks = videoData.tracks.map((track: any) => ({
-              kind: "captions",
-              src: track.url,
-              srcLang: track.lang,
-              label: track.lang,
-              default: track.lang === "en",
-            }));
+            const languageMap: { [key: string]: string } = {
+              en: "English",
+              es: "Español",
+              fr: "Français",
+              it: "Italiano",
+              de: "Deutsch",
+              pt: "Português",
+              nl: "Dutch",
+              th: "ภาษาไทย",
+              zh: "中文",
+            };
+            const formattedTracks = videoData.tracks.map(
+              (track: any, index: number) => ({
+                kind: "captions",
+                src: track.url,
+                srcLang: track.lang,
+                label: track.lang,
+                default: index === 0,
+              })
+            );
+            console.log("MOVIETEST | formattedTracks:", formattedTracks);
             setTracks(formattedTracks);
+            console.log("MOVIETEST | tracks after setTracks:", tracks);
           }
         }
       } catch (error) {
@@ -265,8 +374,9 @@ export default function MoviesTest({
           <video
             ref={videoRef}
             style={{ objectFit: "cover", width: "100%", height: "100%" }}
-            controls
-            playsInline
+            controls={true}
+            autoPlay={true}
+            playsInline={true}
             crossOrigin="anonymous"
             onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
             onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
@@ -284,7 +394,7 @@ export default function MoviesTest({
                 src={track.src}
                 srcLang={track.srcLang}
                 label={track.label}
-                default={track.default}
+                default={track.default == true}
               />
             ))}
             <p>Your browser does not support the video tag.</p>

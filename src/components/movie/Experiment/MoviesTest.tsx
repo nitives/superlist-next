@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { useFullScreenHandle } from "react-full-screen";
+import toast from "react-hot-toast";
+import { IoWarning } from "react-icons/io5";
 
 export default function MoviesTest({
   className,
@@ -26,6 +28,7 @@ export default function MoviesTest({
   const [initialTimeSet, setInitialTimeSet] = useState<boolean>(false);
   const [savedTime, setSavedTime] = useState<number>(0);
   const [currentTimePercentage, setCurrentTimePercentage] = useState<number>(0);
+  const [tracks, setTracks] = useState<any[]>([]);
 
   const getInitialVolume = () => {
     if (typeof window !== "undefined") {
@@ -62,46 +65,6 @@ export default function MoviesTest({
   const handle = useFullScreenHandle();
 
   useEffect(() => {
-    // const fetchVideoUrl = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
-    //     );
-    //     const data = await response.json();
-    //     console.log("MOVIETEST | id:", id);
-    //     setMediaData(data);
-    //     console.log("MOVIETEST | data:", data);
-    //     const imdbId = data.mappings.imdb;
-    //     console.log("MOVIETEST | imdbId:", imdbId);
-    //     if (imdbId) {
-    //       const videoUrl =
-    //         type === "tv"
-    //           ? `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}?ss=${seasonNumber}&ep=${episodeNumber}`
-    //           : `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}`;
-    //       console.log("MOVIETEST | videoUrl:", videoUrl);
-    //       const videoResponse = await fetch(videoUrl);
-    //       console.log("MOVIETEST | videoResponse:", videoResponse);
-    //       const videoData = await videoResponse.json();
-    //       console.log("MOVIETEST | videoData:", videoData);
-    //       const txtFileUrl = videoData?.videoSource;
-    //       console.log("MOVIETEST | txtFileUrl:", txtFileUrl);
-    //       if (txtFileUrl) {
-    //         const txtResponse = await fetch(txtFileUrl);
-    //         console.log("MOVIETEST | txtResponse:", txtResponse);
-    //         const txtData = await txtResponse.text();
-    //         console.log("MOVIETEST | txtData:", txtData);
-    //         const videoLinkMatch = txtData.match(/https:\/\/[^\s]+/);
-    //         console.log("MOVIETEST | txtData:", txtData);
-    //         if (videoLinkMatch) {
-    //           setVideoUrl(videoLinkMatch[0]);
-    //         }
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching video URL:", error);
-    //   }
-    // };
-
     const fetchVideoUrlAlt = async () => {
       try {
         const response = await fetch(
@@ -114,17 +77,49 @@ export default function MoviesTest({
         if (id) {
           const videoUrl =
             type === "tv"
-              ? `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/550?ss=${seasonNumber}&ep=${episodeNumber}`
-              : `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/550`;
+              ? `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/${id}?ss=${seasonNumber}&ep=${episodeNumber}`
+              : `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/${id}`;
           console.log("MOVIETEST | videoUrl:", videoUrl);
           const videoResponse = await fetch(videoUrl);
           console.log("MOVIETEST | videoResponse:", videoResponse);
+
+          if (videoResponse.status === 500) {
+            console.error(
+              "File is unavailable for this player. Please switch to another player."
+            );
+            toast(
+              <div className="flex items-center gap-3">
+                <IoWarning className="text-[#f8102f]" size={24} />
+                <span className="text-left w-full">
+                  <p className="select-none text-muted-foreground">
+                    <b className="text-[#f8102f]">Error</b> File is unavailable
+                    for this player. Please switch to another player.
+                  </p>
+                </span>
+              </div>,
+              {
+                id: "playerissue",
+              }
+            );
+            return;
+          }
+
           const videoData = await videoResponse.json();
           console.log("MOVIETEST | videoData:", videoData);
           const videoFile = videoData?.url;
           console.log("MOVIETEST | videoFile:", videoFile);
           if (videoFile[0].link) {
             setVideoUrl(videoFile[0].link);
+          }
+          if (videoData.tracks) {
+            const formattedTracks = videoData.tracks.map((track: any) => ({
+              kind: "captions",
+              src: track.url,
+              srcLang: track.lang,
+              label: track.lang,
+              default: track.lang === "en",
+            }));
+            setTracks(formattedTracks);
           }
         }
       } catch (error) {
@@ -155,8 +150,6 @@ export default function MoviesTest({
       }
     }
   }, [savedTime, duration, currentTimePercentage]);
-
-  // console.log("media", media);
 
   useEffect(() => {
     const saveCurrentTime = () => {
@@ -230,6 +223,18 @@ export default function MoviesTest({
     }, 7000);
   };
 
+  const LoadingScreen = () => (
+    <div
+      style={{
+        backgroundColor: "black",
+        height: "100%",
+        width: "100%",
+        content: "Loading...",
+        color: "white",
+      }}
+    />
+  );
+
   return (
     <div className={cn(className, "relative")} suppressHydrationWarning={true}>
       <Controls
@@ -247,33 +252,28 @@ export default function MoviesTest({
         setVolume={volumeHandler}
         timeOut={1.5}
       >
-        {videoUrl ? (
-          <ReactPlayer
-            className="min-h-full min-w-screen video-player"
-            ref={videoPlayerRef}
-            height="100%"
-            width="100%"
-            config={{
-              file: {
-                forceHLS: true,
-              },
-            }}
-            controls={false}
-            url={videoUrl}
-            volume={volume}
-            playing={playing}
-            onProgress={({ playedSeconds, loadedSeconds }) => {
-              setCurrentTime(playedSeconds);
-              setBufferTime(loadedSeconds);
-            }}
-            onReady={handleReady}
-          />
-        ) : (
-          <div
-            className="min-h-full min-w-screen video-player"
-            style={{ backgroundColor: "black", height: "100%", width: "100%" }}
-          />
-        )}
+        <ReactPlayer
+          className="aspect-[1.85/1] !h-[75vh] video-player bg-black rounded-[14px]"
+          ref={videoPlayerRef}
+          height="100%"
+          width="100%"
+          config={{
+            file: {
+              forceHLS: true,
+              tracks: tracks,
+            },
+          }}
+          controls={false}
+          url={videoUrl}
+          fallback={<LoadingScreen />}
+          volume={volume}
+          playing={playing}
+          onProgress={({ playedSeconds, loadedSeconds }) => {
+            setCurrentTime(playedSeconds);
+            setBufferTime(loadedSeconds);
+          }}
+          onReady={handleReady}
+        />
       </Controls>
     </div>
   );

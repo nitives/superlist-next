@@ -62,38 +62,69 @@ export default function MoviesTest({
   const handle = useFullScreenHandle();
 
   useEffect(() => {
-    const fetchVideoUrl = async () => {
+    // const fetchVideoUrl = async () => {
+    //   try {
+    //     const response = await fetch(
+    //       `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
+    //     );
+    //     const data = await response.json();
+    //     console.log("MOVIETEST | id:", id);
+    //     setMediaData(data);
+    //     console.log("MOVIETEST | data:", data);
+    //     const imdbId = data.mappings.imdb;
+    //     console.log("MOVIETEST | imdbId:", imdbId);
+    //     if (imdbId) {
+    //       const videoUrl =
+    //         type === "tv"
+    //           ? `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}?ss=${seasonNumber}&ep=${episodeNumber}`
+    //           : `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}`;
+    //       console.log("MOVIETEST | videoUrl:", videoUrl);
+    //       const videoResponse = await fetch(videoUrl);
+    //       console.log("MOVIETEST | videoResponse:", videoResponse);
+    //       const videoData = await videoResponse.json();
+    //       console.log("MOVIETEST | videoData:", videoData);
+    //       const txtFileUrl = videoData?.videoSource;
+    //       console.log("MOVIETEST | txtFileUrl:", txtFileUrl);
+    //       if (txtFileUrl) {
+    //         const txtResponse = await fetch(txtFileUrl);
+    //         console.log("MOVIETEST | txtResponse:", txtResponse);
+    //         const txtData = await txtResponse.text();
+    //         console.log("MOVIETEST | txtData:", txtData);
+    //         const videoLinkMatch = txtData.match(/https:\/\/[^\s]+/);
+    //         console.log("MOVIETEST | txtData:", txtData);
+    //         if (videoLinkMatch) {
+    //           setVideoUrl(videoLinkMatch[0]);
+    //         }
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching video URL:", error);
+    //   }
+    // };
+
+    const fetchVideoUrlAlt = async () => {
       try {
         const response = await fetch(
           `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
         );
         const data = await response.json();
+        console.log("MOVIETEST | id:", id);
         setMediaData(data);
         console.log("MOVIETEST | data:", data);
-        const imdbId = data.mappings.imdb;
-        console.log("MOVIETEST | imdbId:", imdbId);
-        if (imdbId) {
+        if (id) {
           const videoUrl =
             type === "tv"
-              ? `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}?ss=${seasonNumber}&ep=${episodeNumber}`
-              : `https://warezcdn-js.vidsrcproxy.workers.dev/${imdbId}`;
+              ? `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/550?ss=${seasonNumber}&ep=${episodeNumber}`
+              : `https://vidjoy.vidsrcproxy.workers.dev/fetch/soaper/550`;
           console.log("MOVIETEST | videoUrl:", videoUrl);
           const videoResponse = await fetch(videoUrl);
           console.log("MOVIETEST | videoResponse:", videoResponse);
           const videoData = await videoResponse.json();
           console.log("MOVIETEST | videoData:", videoData);
-          const txtFileUrl = videoData?.videoSource;
-          console.log("MOVIETEST | txtFileUrl:", txtFileUrl);
-          if (txtFileUrl) {
-            const txtResponse = await fetch(txtFileUrl);
-            console.log("MOVIETEST | txtResponse:", txtResponse);
-            const txtData = await txtResponse.text();
-            console.log("MOVIETEST | txtData:", txtData);
-            const videoLinkMatch = txtData.match(/https:\/\/[^\s]+/);
-            console.log("MOVIETEST | txtData:", txtData);
-            if (videoLinkMatch) {
-              setVideoUrl(videoLinkMatch[0]);
-            }
+          const videoFile = videoData?.url;
+          console.log("MOVIETEST | videoFile:", videoFile);
+          if (videoFile[0].link) {
+            setVideoUrl(videoFile[0].link);
           }
         }
       } catch (error) {
@@ -101,7 +132,7 @@ export default function MoviesTest({
       }
     };
 
-    fetchVideoUrl();
+    fetchVideoUrlAlt();
   }, [id, type, seasonNumber, episodeNumber]);
 
   useEffect(() => {
@@ -216,26 +247,33 @@ export default function MoviesTest({
         setVolume={volumeHandler}
         timeOut={1.5}
       >
-        <ReactPlayer
-          className="min-h-full min-w-screen video-player"
-          ref={videoPlayerRef}
-          height="100%"
-          width="100%"
-          config={{
-            file: {
-              forceHLS: true,
-            },
-          }}
-          controls={false}
-          url={videoUrl}
-          volume={volume}
-          playing={playing}
-          onProgress={({ playedSeconds, loadedSeconds }) => {
-            setCurrentTime(playedSeconds);
-            setBufferTime(loadedSeconds);
-          }}
-          onReady={handleReady}
-        />
+        {videoUrl ? (
+          <ReactPlayer
+            className="min-h-full min-w-screen video-player"
+            ref={videoPlayerRef}
+            height="100%"
+            width="100%"
+            config={{
+              file: {
+                forceHLS: true,
+              },
+            }}
+            controls={false}
+            url={videoUrl}
+            volume={volume}
+            playing={playing}
+            onProgress={({ playedSeconds, loadedSeconds }) => {
+              setCurrentTime(playedSeconds);
+              setBufferTime(loadedSeconds);
+            }}
+            onReady={handleReady}
+          />
+        ) : (
+          <div
+            className="min-h-full min-w-screen video-player"
+            style={{ backgroundColor: "black", height: "100%", width: "100%" }}
+          />
+        )}
       </Controls>
     </div>
   );

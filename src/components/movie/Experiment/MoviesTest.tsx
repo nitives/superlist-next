@@ -253,7 +253,7 @@ export default function MoviesTest({
         timeOut={1.5}
       >
         <ReactPlayer
-          className="aspect-[1.85/1] !h-[75vh] video-player bg-black rounded-[14px]"
+          className="aspect-[1.85/1] !w-[85vw] video-player bg-black rounded-[14px]"
           ref={videoPlayerRef}
           height="100%"
           width="100%"

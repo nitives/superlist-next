@@ -237,44 +237,72 @@ export default function MoviesTest({
 
   return (
     <div className={cn(className, "relative")} suppressHydrationWarning={true}>
-      <Controls
-        title={media?.title}
-        season={seasonNumber}
-        episode={episodeNumber}
-        episodeName={episodeTitle}
-        videoDuration={duration}
-        onPlayPause={playPauseHandler}
-        setCurrentTime={seekHandler}
-        currentTime={currentTime}
-        bufferTime={bufferTime}
-        playing={playing}
-        volume={volume}
-        setVolume={volumeHandler}
-        timeOut={1.5}
-      >
-        <ReactPlayer
+      {typeof window !== "undefined" && /iPhone/.test(navigator.userAgent) ? (
+        <video
           className="aspect-[1.85/1] !w-[85vw] video-player bg-black rounded-[14px]"
-          ref={videoPlayerRef}
-          height="100%"
-          width="100%"
-          config={{
-            file: {
-              forceHLS: true,
-              tracks: tracks,
-            },
+          controls
+          src={videoUrl}
+          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+          onProgress={(e) => {
+            const buffered = e.currentTarget.buffered;
+            if (buffered.length > 0) {
+              setBufferTime(buffered.end(buffered.length - 1));
+            }
           }}
-          controls={false}
-          url={videoUrl}
-          fallback={<LoadingScreen />}
-          volume={volume}
+        >
+          {tracks.map((track, index) => (
+            <track
+              key={index}
+              kind={track.kind}
+              src={track.src}
+              srcLang={track.srcLang}
+              label={track.label}
+              default={track.default}
+            />
+          ))}
+          <p>Your browser does not support the video tag.</p>
+        </video>
+      ) : (
+        <Controls
+          title={media?.title}
+          season={seasonNumber}
+          episode={episodeNumber}
+          episodeName={episodeTitle}
+          videoDuration={duration}
+          onPlayPause={playPauseHandler}
+          setCurrentTime={seekHandler}
+          currentTime={currentTime}
+          bufferTime={bufferTime}
           playing={playing}
-          onProgress={({ playedSeconds, loadedSeconds }) => {
-            setCurrentTime(playedSeconds);
-            setBufferTime(loadedSeconds);
-          }}
-          onReady={handleReady}
-        />
-      </Controls>
+          volume={volume}
+          setVolume={volumeHandler}
+          timeOut={1.5}
+        >
+          <ReactPlayer
+            className="aspect-[1.85/1] !w-[85vw] video-player bg-black rounded-[14px]"
+            ref={videoPlayerRef}
+            height="100%"
+            width="100%"
+            config={{
+              file: {
+                forceHLS: true,
+                tracks: tracks,
+              },
+            }}
+            controls={false}
+            url={videoUrl}
+            fallback={<LoadingScreen />}
+            volume={volume}
+            playing={playing}
+            onProgress={({ playedSeconds, loadedSeconds }) => {
+              setCurrentTime(playedSeconds);
+              setBufferTime(loadedSeconds);
+            }}
+            onReady={handleReady}
+          />
+        </Controls>
+      )}
     </div>
   );
 }

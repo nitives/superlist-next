@@ -65,7 +65,7 @@ export default function Movies() {
       if (id) {
         await new Promise((resolve) => setTimeout(resolve, 50)); // 50ms wait
         const data = await FetchDetailsTMDB(`${id}`, "movie");
-        console.log("Dynamic Data", data);
+        // console.log("Dynamic Data", data);
         document.title = `Superlist - ${data.title}`;
         const metaDescription = document.querySelector(
           "meta[name='description']"

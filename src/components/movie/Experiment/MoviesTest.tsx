@@ -6,6 +6,7 @@ import ReactPlayer from "react-player";
 import { useFullScreenHandle } from "react-full-screen";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
+import Hls from "hls.js";
 
 export default function MoviesTest({
   className,
@@ -23,6 +24,7 @@ export default function MoviesTest({
   episodeTitle?: any;
 }) {
   const videoPlayerRef = useRef<ReactPlayer | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [media, setMediaData] = useState<any | null>(null);
   const [initialTimeSet, setInitialTimeSet] = useState<boolean>(false);
@@ -235,34 +237,59 @@ export default function MoviesTest({
     />
   );
 
+  useEffect(() => {
+    if (Hls.isSupported() && videoRef.current) {
+      const hls = new Hls();
+      hls.loadSource(videoUrl);
+      hls.attachMedia(videoRef.current);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (videoRef.current) {
+          videoRef.current.play();
+        }
+      });
+    } else if (
+      videoRef.current &&
+      videoRef.current.canPlayType("application/vnd.apple.mpegurl")
+    ) {
+      videoRef.current.src = videoUrl;
+      videoRef.current.addEventListener("loadedmetadata", () => {
+        videoRef.current?.play();
+      });
+    }
+  }, [videoUrl]);
+
   return (
     <div className={cn(className, "relative")} suppressHydrationWarning={true}>
       {typeof window !== "undefined" && /iPhone/.test(navigator.userAgent) ? (
-        <video
-          className="aspect-[1.85/1] !w-[85vw] video-player bg-black rounded-[14px]"
-          controls
-          src={videoUrl}
-          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-          onProgress={(e) => {
-            const buffered = e.currentTarget.buffered;
-            if (buffered.length > 0) {
-              setBufferTime(buffered.end(buffered.length - 1));
-            }
-          }}
-        >
-          {tracks.map((track, index) => (
-            <track
-              key={index}
-              kind={track.kind}
-              src={track.src}
-              srcLang={track.srcLang}
-              label={track.label}
-              default={track.default}
-            />
-          ))}
-          <p>Your browser does not support the video tag.</p>
-        </video>
+        <div className="aspect-[1.85/1] !w-[95vw] video-player bg-black rounded-[14px] overflow-hidden">
+          <video
+            ref={videoRef}
+            style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            controls
+            playsInline
+            crossOrigin="anonymous"
+            onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+            onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+            onProgress={(e) => {
+              const buffered = e.currentTarget.buffered;
+              if (buffered.length > 0) {
+                setBufferTime(buffered.end(buffered.length - 1));
+              }
+            }}
+          >
+            {tracks.map((track, index) => (
+              <track
+                key={index}
+                kind={track.kind}
+                src={track.src}
+                srcLang={track.srcLang}
+                label={track.label}
+                default={track.default}
+              />
+            ))}
+            <p>Your browser does not support the video tag.</p>
+          </video>
+        </div>
       ) : (
         <Controls
           title={media?.title}
@@ -290,6 +317,7 @@ export default function MoviesTest({
                 tracks: tracks,
               },
             }}
+            playsinline
             controls={false}
             url={videoUrl}
             fallback={<LoadingScreen />}

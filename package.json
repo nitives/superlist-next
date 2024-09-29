@@ -38,6 +38,7 @@
     "flowbite-react": "^0.9.0",
     "framer-motion": "^11.2.11",
     "hamburger-react": "^2.5.1",
+    "hls.js": "^1.5.15",
     "lucide-react": "^0.378.0",
     "next": "^14.2.7",
     "next-themes": "^0.3.0",

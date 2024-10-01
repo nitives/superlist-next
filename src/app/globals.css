@@ -851,8 +851,20 @@ video {
 /* Continue Watching */
 .continue-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px; /* Adjust this value to control the space between items */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .continue-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 340px) {
+  .continue-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
 
 .continue-card {

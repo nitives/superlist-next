@@ -169,21 +169,40 @@ body {
 }
 
 .menu {
-  padding: 0;
+  top: -1.5rem;
+  right: -20px;
   position: absolute;
-  z-index: -10;
-  top: -50px;
-  right: -43%;
-  width: 100vw;
-  height: 1000vh;
+  width: 100dvw;
+  height: 100dvh;
   overflow: hidden;
-  transition-property: height;
-  transition: 0.5s ease-in-out;
+  transition: height 0.5s ease-in-out, backdrop-filter 0.5s ease-in-out;
+  backdrop-filter: blur(50px);
 }
 
 .menu-text {
   opacity: 1;
   transition: opacity 1s ease-in-out 0.6s;
+  font-weight: 700;
+  font-size: 28px;
+}
+
+.menu-text a {
+  width: -webkit-fill-available;
+  padding-left: 48px;
+  font-weight: 600;
+  height: 2.5rem;
+  display: flex;
+}
+
+html.globalnav-noscroll,
+html.globalnav-noscroll body {
+  overflow: hidden !important;
+  position: relative;
+  height: 100% !important;
+}
+html.globalnav-noscroll {
+  margin-top: 0 !important;
+  overscroll-behavior: none;
 }
 
 @media (prefers-color-scheme: dark) {

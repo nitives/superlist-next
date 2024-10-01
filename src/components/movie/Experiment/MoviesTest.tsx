@@ -154,7 +154,9 @@ export default function MoviesTest({
                   <IoWarning className="text-[#f8102f]" size={24} />
                   <span className="text-left w-full">
                     <p className="select-none text-muted-foreground">
-                      <b className="text-[#f8102f]">Error</b> File is unavailable for all providers on Superlist Player. Please switch to another player.
+                      <b className="text-[#f8102f]">Error</b> File is
+                      unavailable for all providers on Superlist Player. Please
+                      switch to another player.
                     </p>
                   </span>
                 </div>,

@@ -1,9 +1,15 @@
 "use client";
-import React, { useState, useContext, Suspense } from "react";
+import React, { useState, useContext, useCallback } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { SearchContext } from "@/components";
+
+// Memoize the FaSearch component to prevent unnecessary re-renders
+const MemoizedFaSearch = React.memo(FaSearch);
+
+// Memoize the DialogContent component to prevent unnecessary re-renders
+const MemoizedDialogContent = React.memo(DialogContent);
 
 export const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,11 +17,18 @@ export const SearchBar = () => {
   const { setSearchQuery } = useContext(SearchContext); // Use the context
   const router = useRouter();
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     setSearchQuery(searchTerm); // Set the search query in context
     router.push(`/movies?search=${searchTerm}`); // Redirect to the movies page with search term
     setIsDialogOpen(false); // Close the dialog
-  };
+  }, [searchTerm, setSearchQuery, router]);
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+    },
+    []
+  );
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -28,25 +41,23 @@ export const SearchBar = () => {
           </kbd>
         </div>
         <div className="sm:hidden block">
-          <FaSearch className="fill-foreground" />
+          <MemoizedFaSearch className="fill-foreground" />
         </div>
       </DialogTrigger>
-      <DialogContent className="flex items-center bg-background/50 backdrop-blur-md p-2 !rounded-[1rem] search-con pl-5 gap-1">
-        <FaSearch className="fill-[#fafafa]" />
-        <Suspense>
-          <input
-            id="searchInput"
-            className="bg-transparent block w-full h-12 px-3 py-1 transition-colors leading-tight placeholder:text-neutral-500 outline-2 outline-none text-xl"
-            type="search"
-            placeholder="Search movies and shows..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSearch();
-            }}
-          />
-        </Suspense>
-      </DialogContent>
+      <MemoizedDialogContent className="flex items-center bg-background/50 backdrop-blur-md p-2 !rounded-[1rem] search-con pl-5 gap-1">
+        <MemoizedFaSearch className="fill-[#fafafa]" />
+        <input
+          id="searchInput"
+          className="bg-transparent block w-full h-12 px-3 py-1 transition-colors leading-tight placeholder:text-neutral-500 outline-2 outline-none text-xl"
+          type="search"
+          placeholder="Search movies and shows..."
+          value={searchTerm}
+          onChange={handleInputChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSearch();
+          }}
+        />
+      </MemoizedDialogContent>
     </Dialog>
   );
 };

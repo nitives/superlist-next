@@ -9,7 +9,7 @@ import {
 } from "@/components";
 import { FramerTest, Pill } from "@/components/customui";
 import sitesData from "../../public/data/siteData.json";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import getConfig from "./content/localization/manager";
 import { Config } from "./content/localization/types/config";
 import { motion } from "framer-motion";
@@ -36,14 +36,17 @@ export default function Home() {
     setConfig(getConfig(language));
   }, [language]);
 
-  const filteredSites =
-    selectedCategories.length === 0
+  const filteredSites = useMemo(() => {
+    return selectedCategories.length === 0
       ? sitesData
       : sitesData.filter((site) =>
           selectedCategories.every((category) =>
             site.categories.includes(category)
           )
         );
+  }, [selectedCategories]);
+
+  const transition = useMemo(() => ({ duration: 0.55 }), []);
 
   if (!config) {
     return (
@@ -112,7 +115,7 @@ export default function Home() {
               translateY: 0,
               filter: "blur(0px)",
             }}
-            transition={{ duration: 0.55 }}
+            transition={transition}
           >
             <div className="uppercase text-center z-10">
               <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">

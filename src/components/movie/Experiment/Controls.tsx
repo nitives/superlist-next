@@ -122,7 +122,7 @@ export const Controls = ({
 
   const getPreviewScreenUrl = (hoverTimeValue: number) => {
     // Replace this with your logic to get the preview image URL based on the hover time
-    return `https://via.placeholder.com/140x60?time=${hoverTimeValue}`;
+    return ` https://via.placeholder.com/140x60?time=${hoverTimeValue}`;
   };
 
   return (
@@ -220,7 +220,7 @@ export const Controls = ({
                     onChange={(time) => setCurrentTime(time / 1000)} // Convert from milliseconds
                     secondsPrefix="00:00:"
                     minutesPrefix="00:"
-                    getPreviewScreenUrl={getPreviewScreenUrl}
+                    // getPreviewScreenUrl={getPreviewScreenUrl}
                   />
                 </div>
               </div>

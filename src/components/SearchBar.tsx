@@ -7,16 +7,18 @@ import { SearchContext } from "@/components";
 
 export const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog open/close
   const { setSearchQuery } = useContext(SearchContext); // Use the context
   const router = useRouter();
 
   const handleSearch = () => {
     setSearchQuery(searchTerm); // Set the search query in context
     router.push(`/movies?search=${searchTerm}`); // Redirect to the movies page with search term
+    setIsDialogOpen(false); // Close the dialog
   };
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger>
         <div className="hidden sm:inline-flex bg-background/50 main-border items-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground px-4 py-2 relative h-8 w-full justify-start rounded-[0.5rem] text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-64">
           <span className="hidden lg:inline-flex">Search movies...</span>

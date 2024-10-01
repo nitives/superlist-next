@@ -147,21 +147,20 @@ export default function MoviesTest({
 
             if (!validVideoUrl) {
               console.error(
-                "File is unavailable for all providers. Please switch to another player."
+                "File is unavailable for all providers on Superlist Player. Please switch to another player."
               );
               toast(
                 <div className="flex items-center gap-3">
                   <IoWarning className="text-[#f8102f]" size={24} />
                   <span className="text-left w-full">
                     <p className="select-none text-muted-foreground">
-                      <b className="text-[#f8102f]">Error</b> File is
-                      unavailable for all providers. Please switch to another
-                      player.
+                      <b className="text-[#f8102f]">Error</b> File is unavailable for all providers on Superlist Player. Please switch to another player.
                     </p>
                   </span>
                 </div>,
                 {
                   id: "playerissue",
+                  duration: 15000,
                 }
               );
               return;
@@ -195,15 +194,33 @@ export default function MoviesTest({
                   label: track.lang,
                   default: track.default,
                 }));
-              console.log("MOVIETEST | formattedTracks:", formattedTracks);
+              console.log(
+                `%c[MovieTest.tsx]%c`,
+                "color: rgb(100, 255, 255)",
+                "color: inherit",
+                "formattedTracks >>>",
+                formattedTracks
+              );
               setTracks(formattedTracks);
             }
           }
 
           const videoData = await videoResponse.json();
-          console.log("MOVIETEST | videoData:", videoData);
+          console.log(
+            `%c[MovieTest.tsx]%c`,
+            "color: rgb(100, 255, 255)",
+            "color: inherit",
+            "videoData >>>",
+            videoData
+          );
           const videoFile = videoData?.url;
-          console.log("MOVIETEST | videoFile:", videoFile);
+          console.log(
+            `%c[MovieTest.tsx]%c`,
+            "color: rgb(100, 255, 255)",
+            "color: inherit",
+            "videoFile >>>",
+            videoFile
+          );
           if (videoFile[0].link) {
             setVideoUrl(videoFile[0].link);
           }
@@ -228,9 +245,21 @@ export default function MoviesTest({
                 default: index === 0,
               })
             );
-            console.log("MOVIETEST | formattedTracks:", formattedTracks);
+            console.log(
+              `%c[MovieTest.tsx]%c`,
+              "color: rgb(100, 255, 255)",
+              "color: inherit",
+              "formattedTracks >>>",
+              formattedTracks
+            );
             setTracks(formattedTracks);
-            console.log("MOVIETEST | tracks after setTracks:", tracks);
+            console.log(
+              `%c[MovieTest.tsx]%c`,
+              "color: rgb(100, 255, 255)",
+              "color: inherit",
+              "tracks after setTracks >>>",
+              tracks
+            );
           }
         }
       } catch (error) {
@@ -239,6 +268,7 @@ export default function MoviesTest({
     };
 
     fetchVideoUrlAlt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, type, seasonNumber, episodeNumber]);
 
   useEffect(() => {

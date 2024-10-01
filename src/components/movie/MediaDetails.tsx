@@ -9,23 +9,28 @@ import { PLACEHOLDER_IMG_LIGHT, PLACEHOLDER_IMG_DARK } from "./placeholder";
 import { useTheme } from "next-themes";
 import DurationConvert from "./DurationConvert";
 import Head from "next/head";
+import { useMediaStore } from "@/store/media-store";
 
 export default function MediaDetails() {
   const { id } = useParams();
-  const [movie, setMovie] = useState<any>(null);
+  const {
+    mediaDetails: movie,
+    loading,
+    error,
+    fetchMediaDetails,
+  } = useMediaStore();
 
   useEffect(() => {
-    const getMovieDetails = async () => {
-      if (id) {
-        await new Promise((resolve) => setTimeout(resolve, 50)); // 50ms wait
-        const data = await FetchDetailsTMDB(`${id}`, "movie");
-        setMovie(data);
+    if (id) {
+      if (typeof id === "string") {
+        fetchMediaDetails(id, "movie");
+      } else {
+        fetchMediaDetails(id[0], "movie");
       }
-    };
+    }
+  }, [id, fetchMediaDetails]);
 
-    getMovieDetails();
-  }, [id]);
-
+  // console.log("Global Store Movie Data", movie);
   const { theme } = useTheme();
   const placeholderImage =
     theme === "dark" || "system"
@@ -36,9 +41,9 @@ export default function MediaDetails() {
     if (movie) {
       document.title = "Superlist - " + movie.title;
     }
-  });
+  }, [movie]);
 
-  if (!movie) {
+  if (loading) {
     return (
       <div className="flex max-sm:flex-col pt-[1rem] max-sm:pt-[2rem] px-[10rem] max-md:px-[3rem] max-sm:px-[1rem] w-full h-auto gap-4 justify-center">
         <div>
@@ -73,6 +78,13 @@ export default function MediaDetails() {
     );
   }
 
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!movie) {
+    return null;
+  }
   return (
     <>
       <Head>
@@ -116,7 +128,7 @@ export default function MediaDetails() {
                 key={index}
                 className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
               >
-                {category.name}
+                {category}
               </p>
             ))}
             <span className="text-sm text-muted">|</span>

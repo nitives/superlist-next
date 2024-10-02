@@ -1,13 +1,6 @@
 "use client";
-import {
-  Site,
-  SiteContainer,
-  FilterBar,
-  AniBG,
-  Popular,
-  Filter,
-} from "@/components";
-import { FramerTest, Pill } from "@/components/customui";
+import { Site, SiteContainer, FilterBar, AniBG } from "@/components";
+import { Pill } from "@/components/customui";
 import sitesData from "../../public/data/siteData.json";
 import React, { useEffect, useState, useMemo } from "react";
 import getConfig from "./content/localization/manager";
@@ -45,8 +38,6 @@ export default function Home() {
           )
         );
   }, [selectedCategories]);
-
-  const transition = useMemo(() => ({ duration: 0.55 }), []);
 
   if (!config) {
     return (
@@ -115,7 +106,7 @@ export default function Home() {
               translateY: 0,
               filter: "blur(0px)",
             }}
-            transition={transition}
+            transition={{ duration: 0.5 }}
           >
             <div className="uppercase text-center z-10">
               <a className="grayscale hero-text text-foreground font-bold *:font-bold text-center align-middle tracking-tighter inline-block mt-5">

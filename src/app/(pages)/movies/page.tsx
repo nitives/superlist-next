@@ -388,7 +388,7 @@ export default function Discover() {
         {loading && page === 1
           ? Array.from({ length: 24 }).map((_, index) => (
               <div key={index} className="movie-card">
-                <Skeleton className="w-auto h-[300px]" />
+                <Skeleton className="w-auto aspect-[2/3]" />
               </div>
             ))
           : media.map((item) => (

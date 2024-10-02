@@ -26,6 +26,19 @@
     }
   },
   {
+    "name": "FileCR",
+    "categories": ["Pirate"],
+    "description": "Great site for Adobe",
+    "important": "",
+    "imageSrc": "/images/cache/captures/FileCR.png",
+    "favicon": "/images/favicons/filecr.ico",
+    "link": "https://www.filecr.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/filecr",
+      "github": "https://github.com/filecr"
+    }
+  },
+  {
     "name": "4Download",
     "categories": ["Pirate"],
     "description": "A platform for downloading various files.",

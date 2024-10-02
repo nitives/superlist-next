@@ -41,7 +41,7 @@
     "hamburger-react": "^2.5.1",
     "hls.js": "^1.5.15",
     "lucide-react": "^0.378.0",
-    "next": "^14.2.7",
+    "next": "^14.2.14",
     "next-themes": "^0.3.0",
     "node-fetch": "^3.3.2",
     "overflow-scroll-fade": "^0.3.2",

@@ -30,7 +30,7 @@ export default function MediaDetails() {
     }
   }, [id, fetchMediaDetails]);
 
-  // console.log("Global Store Movie Data", movie);
+  console.log("Global Store Movie Data", movie);
   const { theme } = useTheme();
   const placeholderImage =
     theme === "dark" || "system"
@@ -71,7 +71,7 @@ export default function MediaDetails() {
           </div>
           <Skeleton
             id="movie.overview.skeleton"
-            className="w-[40rem] h-10 rounded-md my-0.5"
+            className="w-[40rem] max-sm:w-[100%] h-10 rounded-md my-0.5"
           />
         </div>
       </div>
@@ -81,6 +81,8 @@ export default function MediaDetails() {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  console.log("Movie Data", movie);
 
   if (!movie) {
     return null;
@@ -123,12 +125,12 @@ export default function MediaDetails() {
           </div>
 
           <div className="flex gap-1 items-center py-1 select-none flex-wrap">
-            {movie.genres.map((category: any, index: number) => (
+            {movie.genres.map((genre: any, index: number) => (
               <p
-                key={index}
+                key={genre.id}
                 className="bg-foreground/5 p-1 border rounded-md flex text-xs w-fit flex-wrap"
               >
-                {category}
+                {genre.name}
               </p>
             ))}
             <span className="text-sm text-muted">|</span>

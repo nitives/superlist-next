@@ -33,7 +33,7 @@ export const VersionSwitch = () => {
         >
           <MenuItems
             anchor="bottom start"
-            className="z-30 mt-2 w-48 origin-top-left bg-background/50 rounded-xl main-border backdrop-blur-[5px] divide-y divide-gray-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            className="z-30 mt-2 w-48 origin-top-left bg-foreground/5 dark:bg-background/50 text-background dark:text-foreground rounded-xl main-border backdrop-blur-[5px] divide-y divide-gray-100 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <div className="p-1">
               {[

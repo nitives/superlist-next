@@ -4,10 +4,13 @@ import { twMerge } from "tailwind-merge";
 import { SearchContext } from "@/components";
 import { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { META } from "@consumet/extensions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+const metaProvider = META.TMDB;
 
 const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
@@ -65,20 +68,38 @@ export async function FetchRecommendationsTMDB(id: string, type: string) {
   }
 }
 
+// export async function FetchMoreDetailsTMDB(id: string, type: string) {
+//   try {
+//     const url = new URL(
+//       `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
+//     );
+//     const response = await fetch(url.toString(), { cache: "no-cache" });
+//     if (!response.ok)
+//       throw new Error("FetchMoreDetailsTMDB | Failed to fetch data");
+//     const data = await response.json();
+//     return data;
+//   } catch (error) {
+//     console.log("Error:", error);
+//   }
+// }
+
 export async function FetchMoreDetailsTMDB(id: string, type: string) {
+  const tmdb = new META.TMDB(TMDBkey);
   try {
-    const url = new URL(
-      `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
-    );
-    const response = await fetch(url.toString(), { cache: "no-cache" });
-    if (!response.ok)
-      throw new Error("FetchMoreDetailsTMDB | Failed to fetch data");
-    const data = await response.json();
-    return data;
+    const results = await tmdb.fetchMediaInfo(id, type);
+    return results;
   } catch (error) {
     console.log("Error:", error);
   }
 }
+
+// try {
+//   const results = await tmdb.search(query);
+//   console.log("Search results:", results);
+//   return results;
+// } catch (error) {
+//   console.error("Error searching TMDB:", error);
+// }
 
 export async function FetchTVDetailsTMDB(
   id: string,

@@ -173,7 +173,7 @@ export default function Discover() {
   };
 
   const continueWatchingItems = fetchContinueWatching();
-  console.log("continueWatchingItems:", continueWatchingItems);
+  // console.log("continueWatchingItems:", continueWatchingItems);
 
   const calculatePercentageWatched = (
     currentTime: number,

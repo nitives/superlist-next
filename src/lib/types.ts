@@ -30,23 +30,15 @@ export interface Recommendation {
 }
 
 export interface Movie {
-  actors: string[];
   adult: boolean;
   backdrop_path: string;
   belongs_to_collection: null | Collection;
   budget: number;
-  cover: string;
-  description: string;
-  directors: string[];
-  duration: number;
-  episodeId: string;
+  extra: Extra;
   genres: string[];
   homepage: string;
-  id: string;
-  image: string;
+  id: number;
   imdb_id: string;
-  logos: Logo[];
-  mappings: Mappings;
   origin_country: string[];
   original_language: string;
   original_title: string;
@@ -55,24 +47,46 @@ export interface Movie {
   poster_path: string;
   production_companies: ProductionCompany[];
   production_countries: ProductionCountry[];
-  rating: number;
-  recommendations: Recommendation[];
-  releaseDate: string;
   release_date: string;
   revenue: number;
   runtime: number;
-  similar: SimilarMovie[];
   spoken_languages: SpokenLanguage[];
   status: string;
   tagline: string;
   title: string;
-  trailer: Trailer;
-  translations: Translation[];
-  type: string;
   video: boolean;
   vote_average: number;
   vote_count: number;
+}
+
+export interface Extra {
+  actors: string[];
+  cover: string;
+  description: string;
+  directors: string[];
+  duration: number;
+  episodeId: string;
+  genres: string[];
+  id: string;
+  image: string;
+  logos: string[];
+  mappings: Mappings;
+  rating: number;
+  recommendations: Recommendation[];
+  releaseDate: string;
+  similar: SimilarMovie[];
+  title: string;
+  totalEpisodes: number | string | undefined;
+  totalSeasons: number | string | undefined;
+  trailer: Trailer;
+  translations: Translation[];
+  type: string;
   writers: string[];
+}
+
+export interface Mappings {
+  imdb: string;
+  tmdb: number;
 }
 
 export interface Collection {

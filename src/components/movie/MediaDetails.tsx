@@ -1,8 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FetchDetailsTMDB } from "@/lib/utils";
+import { useEffect } from "react";
 import { TimeConvert } from "../TimeConvert";
 import { Skeleton } from "../ui/skeleton";
 import { PLACEHOLDER_IMG_LIGHT, PLACEHOLDER_IMG_DARK } from "./placeholder";

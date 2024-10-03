@@ -16,11 +16,12 @@ export const useMediaStore = create<MediaState>((set) => ({
   fetchMediaDetails: async (id: string, type: "movie" | "tv") => {
     set({ loading: true, error: null });
     try {
-      const mediaDetails = {
-        ...(await FetchDetailsTMDB(id, type)),
-        ...(await FetchMoreDetailsTMDB(id, type)),
-      };
-      set({ mediaDetails, loading: false });
+      const mediaDetails = await FetchDetailsTMDB(id, type);
+      const moreDetails = await FetchMoreDetailsTMDB(id, type);
+      set({
+        mediaDetails: { ...mediaDetails, extra: moreDetails },
+        loading: false,
+      });
     } catch (error) {
       if (error instanceof Error) {
         set({ error: error.message, loading: false });

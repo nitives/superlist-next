@@ -7,6 +7,12 @@ import { useFullScreenHandle } from "react-full-screen";
 import toast from "react-hot-toast";
 import { IoWarning } from "react-icons/io5";
 import Hls from "hls.js";
+import { META } from "@consumet/extensions";
+import { useMediaStore } from "@/store/media-store";
+import { Movie } from "@/lib/types";
+
+const metaProvider = META.TMDB;
+const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
 export default function MoviesTest({
   className,
@@ -17,7 +23,7 @@ export default function MoviesTest({
   episodeTitle,
 }: {
   className?: string;
-  type: string;
+  type: "movie" | "tv";
   id: any;
   episodeNumber?: any;
   seasonNumber?: any;
@@ -26,11 +32,27 @@ export default function MoviesTest({
   const videoPlayerRef = useRef<ReactPlayer | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
-  const [media, setMediaData] = useState<any | null>(null);
+  // const [media, setMediaData] = useState<any | null>(null);
   const [initialTimeSet, setInitialTimeSet] = useState<boolean>(false);
   const [savedTime, setSavedTime] = useState<number>(0);
   const [currentTimePercentage, setCurrentTimePercentage] = useState<number>(0);
   const [tracks, setTracks] = useState<any[]>([]);
+  const {
+    mediaDetails: media,
+    loading,
+    error,
+    fetchMediaDetails,
+  } = useMediaStore();
+
+  useEffect(() => {
+    if (id) {
+      if (typeof id === "string") {
+        fetchMediaDetails(id, type);
+      } else {
+        fetchMediaDetails(id[0], type);
+      }
+    }
+  }, [id, type, fetchMediaDetails]);
 
   const getInitialVolume = () => {
     if (typeof window !== "undefined") {
@@ -76,16 +98,16 @@ export default function MoviesTest({
     return date.toLocaleDateString(undefined, options);
   };
 
-  const setMediaSessionMetadata = (media: any) => {
+  const setMediaSessionMetadata = (media: Movie) => {
     if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: media.title || "Unknown Title",
-        artist: media.ex.production_companies[0].name || "Unknown Publisher",
+        artist: media.production_companies[0].name || "Unknown Publisher",
         artwork: [
           {
             src:
-              media.image ||
-              `https://image.tmdb.org/t/p/w500${media.ex.poster_path}`,
+              media.extra.image ||
+              `https://image.tmdb.org/t/p/w500${media.poster_path}`,
             sizes: "512x512",
             type: "image/png",
           },
@@ -100,27 +122,27 @@ export default function MoviesTest({
       console.log(
         "MOVIETEST | setMediaSessionMetadata:",
         media.title,
-        media.image,
-        media.ex.production_companies[0].name,
-        formatDate(media.releaseDate)
+        media.extra.image,
+        media.production_companies[0].name,
+        formatDate(media.release_date)
       );
     }
   }, [media, playing]);
 
   useEffect(() => {
     const fetchVideoUrlAlt = async () => {
+      const tmdb = new META.TMDB(TMDBkey);
       try {
-        const response = await fetch(
-          `https://superlist-consumet-api.vercel.app/meta/tmdb/info/${id}?type=${type}`
-        );
-        const extraData = await FetchDetailsTMDB(`${id}`, type);
-        const superlistData = await response.json();
-        const data = {
-          ...superlistData,
-          ex: extraData,
-        };
-        setMediaData(data);
-        setMediaSessionMetadata(data);
+        // const results = await tmdb.fetchMediaInfo(id, type);
+        // console.log("MOVIETEST | results:", results);
+        // const extraData = await FetchDetailsTMDB(`${id}`, type);
+        // const superlistData = await results;
+        // const data = {
+        //   ...superlistData,
+        //   extra: extraData,
+        // };
+        // setMediaData(data);
+        // setMediaSessionMetadata(data);
         const provider = "soaper"; // soaper, warezcdn, frembed, autoembed, faselhd
         if (id) {
           const videoUrl =
@@ -306,8 +328,11 @@ export default function MoviesTest({
           if (media?.title) {
             localStorage.setItem(`videoTitle-${id}`, media.title);
           }
-          if (media?.cover) {
-            localStorage.setItem(`videoPoster-${id}`, media.cover);
+          if (media?.backdrop_path || media?.extra.cover) {
+            localStorage.setItem(
+              `videoPoster-${id}`,
+              media.backdrop_path || media.extra.cover
+            );
           }
           if (duration > 0) {
             localStorage.setItem(`videoDuration-${id}`, duration.toString());
@@ -327,6 +352,7 @@ export default function MoviesTest({
       clearInterval(interval);
       saveCurrentTime();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     id,
     type,
@@ -336,7 +362,7 @@ export default function MoviesTest({
     seasonNumber,
     episodeNumber,
     episodeTitle,
-    media?.cover,
+    media?.extra.cover,
   ]);
 
   const playPauseHandler = () => {
@@ -434,7 +460,7 @@ export default function MoviesTest({
         </div>
       ) : (
         <Controls
-          title={media?.title}
+          title={media?.title || media?.extra.title || ""}
           season={seasonNumber}
           episode={episodeNumber}
           episodeName={episodeTitle}

@@ -11,10 +11,7 @@ import { META } from "@consumet/extensions";
 import { useMediaStore } from "@/store/media-store";
 import { Movie } from "@/lib/types";
 
-const metaProvider = META.TMDB;
-const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-
-export default function MoviesTest({
+export default function SuperlistPlayer({
   className,
   type,
   id,
@@ -131,7 +128,6 @@ export default function MoviesTest({
 
   useEffect(() => {
     const fetchVideoUrlAlt = async () => {
-      const tmdb = new META.TMDB(TMDBkey);
       try {
         // const results = await tmdb.fetchMediaInfo(id, type);
         // console.log("MOVIETEST | results:", results);

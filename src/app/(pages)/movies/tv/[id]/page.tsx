@@ -13,9 +13,10 @@ import {
 import toast, { ToastBar, Toaster } from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
-import MoviesTest from "@/components/movie/Experiment/MoviesTest";
+import SuperlistPlayer from "@/components/movie/Experiment/SuperlistPlayer";
 import { useParams } from "next/navigation";
 import { FetchMoreDetailsTMDB } from "@/lib/utils";
+import { useMediaStore } from "@/store/media-store";
 
 const notify = () =>
   toast(
@@ -42,18 +43,25 @@ export default function TVShows() {
   const [toastShown, setToastShown] = useState<boolean>(false);
   const [episodeTitle, setEpisodeTitle] = useState<string>("----");
   const [episodeData, setEpisodeData] = useState<any>(null);
+  const {
+    mediaDetails: data,
+    loading,
+    error,
+    fetchMediaDetails,
+  } = useMediaStore();
 
   useEffect(() => {
     const getTVDetails = async () => {
       if (id) {
-        await new Promise((resolve) => setTimeout(resolve, 50)); // 50ms wait
-        const data = await FetchMoreDetailsTMDB(`${id}`, "tv");
+        // await new Promise((resolve) => setTimeout(resolve, 50));
+        fetchMediaDetails(id, "tv");
         // console.log(
         //   "getTVDetails - 50",
         //   data.seasons[seasonNumber - 1].episodes[episodeNumber - 1].title
         // );
+        console.log("getTVDetails", data);
         setEpisodeData(data);
-        const firstEpisodeTitle = data.seasons[0].episodes[0].title;
+        const firstEpisodeTitle = data?.seasons[0].episodes[0].title;
         setEpisodeTitle(firstEpisodeTitle);
       }
     };
@@ -69,8 +77,6 @@ export default function TVShows() {
   const handleSourceChange = (value: string) => {
     setSelectedSource(value);
   };
-
-  console.log("selectedEpisodeUrl", selectedEpisodeUrl);
 
   useEffect(() => {
     if (selectedSource === "superlist" && !toastShown) {
@@ -111,7 +117,7 @@ export default function TVShows() {
         <div className="flex flex-col gap-2">
           <div className="px-2 w-full flex flex-col items-center justify-center gap-10">
             {selectedSource === "superlist" ? (
-              <MoviesTest
+              <SuperlistPlayer
                 id={id}
                 type="tv"
                 episodeNumber={episodeNumber}

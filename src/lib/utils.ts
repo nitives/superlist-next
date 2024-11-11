@@ -10,8 +10,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const metaProvider = META.TMDB;
-
 const TMDBkey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
 export async function FetchSearchTMDB(id: string, type: string) {
@@ -85,10 +83,25 @@ export async function FetchRecommendationsTMDB(id: string, type: string) {
 
 export async function FetchMoreDetailsTMDB(id: string, type: string) {
   const tmdb = new META.TMDB(TMDBkey);
+  const startTime = performance.now();
   try {
     const results = await tmdb.fetchMediaInfo(id, type);
+    const endTime = performance.now();
+    console.log(
+      `utils.ts | FetchMoreDetailsTMDB took ${
+        endTime - startTime
+      } milliseconds`,
+      results
+    );
     return results;
   } catch (error) {
+    const endTime = performance.now();
+    console.log(
+      `utils.ts | FetchMoreDetailsTMDB failed after ${
+        endTime - startTime
+      } milliseconds`,
+      error
+    );
     console.log("Error:", error);
   }
 }

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import MoviesTest from "@/components/movie/Experiment/MoviesTest";
+import SuperlistPlayer from "@/components/movie/Experiment/SuperlistPlayer";
 import { useParams } from "next/navigation";
 import toast, { ToastBar, Toaster } from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
@@ -147,7 +147,7 @@ export default function Movies() {
         <div className="flex flex-col gap-2">
           <div className="px-2 w-full flex flex-col items-center justify-center gap-10">
             {selectedSource === "superlist" ? (
-              <MoviesTest id={id} type="movie" />
+              <SuperlistPlayer id={id} type="movie" />
             ) : (
               <VideoPlayer
                 className="aspect-video rounded-2xl max-h-[50rem] w-full flex video-player"

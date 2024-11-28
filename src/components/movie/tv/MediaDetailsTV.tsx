@@ -57,7 +57,7 @@ export default function MediaDetailsTV({
         setTVStills(imgdata);
 
         // Automatically select the first season and first episode
-        if (details.seasons.length > 0) {
+        if (details?.seasons.length > 0) {
           const firstSeason = details?.seasons[0]?.season;
           console.log("firstSeason", firstSeason);
           setSelectedSeason(firstSeason);

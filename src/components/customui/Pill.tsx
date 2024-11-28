@@ -13,7 +13,7 @@ export const Pill = ({
     <div className={className}>
       <a
         href={href}
-        className="flex items-center h-7 backdrop-blur-md text-xs px-2 bg-foreground/10 border dark:border-foreground/[0.05] border-neutral-500/20 rounded-full whitespace-nowrap decoration-none cursor-pointer"
+        className="flex items-center h-7 backdrop-blur-md text-xs px-2 text-blue-400 bg-blue-500/10 border dark:border-blue-500 border-neutral-500/20 rounded-full whitespace-nowrap decoration-none cursor-pointer"
       >
         <p>{children}</p>
         <ChevronRightIcon className="size-4 relative left-[2px]" />

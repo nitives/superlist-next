@@ -44,10 +44,11 @@ export default function Home() {
       <main className="p-2">
         <div className="w-full mx-auto my-0 ">
           <div className="mt-10 my-5 items-center flex-col flex ">
-            <Pill href="./" className="">
-              Superlist 3.7
+            <Pill href="https://tv.superlist.cc" className="">
+              <strong>NEW</strong> Superlist TV
             </Pill>
             <motion.div
+              layoutId="hero-text"
               initial={{
                 opacity: 0,
                 translateY: -10,
@@ -97,10 +98,13 @@ export default function Home() {
     <main className="p-2">
       <div className="w-full mx-auto my-0 ">
         <div className="mt-10 my-5 items-center flex-col flex ">
-          <Pill href="/archive/v3.7/index.html" className="">
-            <p>Superlist 3.7</p>
+          <Pill href="https://tv.superlist.cc" className="">
+            <p>
+              <strong>NEW</strong> Superlist TV
+            </p>
           </Pill>
           <motion.div
+            layoutId="hero-text"
             animate={{
               opacity: 1,
               translateY: 0,

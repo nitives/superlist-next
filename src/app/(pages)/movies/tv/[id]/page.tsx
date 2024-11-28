@@ -35,7 +35,7 @@ const notify = () =>
   );
 
 export default function TVShows() {
-  const { id } = useParams();
+  const id = useParams().id as string;
   const [selectedEpisodeUrl, setSelectedEpisodeUrl] = useState<string | null>(
     null
   );
@@ -61,7 +61,7 @@ export default function TVShows() {
         // );
         console.log("getTVDetails", data);
         setEpisodeData(data);
-        const firstEpisodeTitle = data?.seasons[0].episodes[0].title;
+        const firstEpisodeTitle = data?.seasons[0].episodes[0].title || "----";
         setEpisodeTitle(firstEpisodeTitle);
       }
     };

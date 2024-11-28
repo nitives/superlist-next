@@ -136,6 +136,15 @@ export interface Movie {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  seasons: [
+    {
+      episodes: [
+        {
+          title: string;
+        }
+      ];
+    }
+  ];
 }
 
 export interface Extra {

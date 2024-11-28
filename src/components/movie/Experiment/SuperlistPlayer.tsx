@@ -354,11 +354,11 @@ export default function SuperlistPlayer({
     type,
     currentTime,
     media?.title,
+    media?.extra.cover,
     duration,
     seasonNumber,
     episodeNumber,
     episodeTitle,
-    media?.extra.cover,
   ]);
 
   const playPauseHandler = () => {
